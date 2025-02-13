@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_type_id',
+        'company_name',
+        'kvk_number',
+        'vat_number',
+        'phone',
+        'address',
+        'city',
+        'postal_code',
+        'country',
+        'language',
     ];
 
     /**
@@ -43,6 +54,33 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'contract_approved' => 'boolean',
+            'contract_approved_at' => 'datetime',
         ];
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function userType()
+    {
+        return $this->belongsTo(UserType::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->roles->contains('slug', $role);
+    }
+
+    public function isBusinessUser()
+    {
+        return $this->userType && $this->userType->is_business;
+    }
+
+    public function canAdvertise()
+    {
+        return $this->userType && $this->userType->can_advertise;
     }
 }
