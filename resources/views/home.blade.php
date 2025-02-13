@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', __('Home'))
-
-@section('content')
+<x-app-layout>
 <div class="bg-white dark:bg-gray-900">
     <!-- Hero section -->
     <div class="relative isolate overflow-hidden bg-gradient-to-b from-indigo-100/40 dark:from-indigo-900/40">
@@ -44,11 +40,7 @@
             <article class="flex flex-col items-start justify-between">
                 <div class="relative w-full">
                     <div class="aspect-[16/9] w-full rounded-2xl bg-gray-100 dark:bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-                        <div class="flex items-center justify-center h-full">
-                            <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Marketplace items displayed on a table" class="w-full h-full object-cover rounded-2xl">
                     </div>
                     <div class="mt-4">
                         <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
@@ -63,11 +55,7 @@
             <article class="flex flex-col items-start justify-between">
                 <div class="relative w-full">
                     <div class="aspect-[16/9] w-full rounded-2xl bg-gray-100 dark:bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-                        <div class="flex items-center justify-center h-full">
-                            <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1530065928592-fb0dc85d2f27?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Rental equipment" class="w-full h-full object-cover rounded-2xl">
                     </div>
                     <div class="mt-4">
                         <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
@@ -82,11 +70,7 @@
             <article class="flex flex-col items-start justify-between">
                 <div class="relative w-full">
                     <div class="aspect-[16/9] w-full rounded-2xl bg-gray-100 dark:bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-                        <div class="flex items-center justify-center h-full">
-                            <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Auction gavel" class="w-full h-full object-cover rounded-2xl">
                     </div>
                     <div class="mt-4">
                         <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
@@ -99,4 +83,4 @@
         </div>
     </div>
 </div>
-@endsection 
+</x-app-layout>

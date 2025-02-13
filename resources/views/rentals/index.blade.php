@@ -1,14 +1,10 @@
-@extends('layouts.app')
-
-@section('title', __('Rentals'))
-
-@section('content')
+<x-app-layout>
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('Rentals') }}</h2>
-            <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ __('Browse items available for rent') }}</p>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Browse items available for rent') }}</p>
         </div>
 
         <div class="flex flex-col md:flex-row gap-6">
@@ -55,7 +51,7 @@
                         <!-- Location -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Location') }}</label>
-                            <input type="text" name="location" placeholder="Enter location" class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm">
+                            <input type="text" name="location" placeholder="{{ __('Enter location') }}" class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm">
                         </div>
 
                         <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
@@ -141,4 +137,4 @@
         </div>
     </div>
 </div>
-@endsection 
+</x-app-layout>

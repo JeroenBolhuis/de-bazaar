@@ -7,6 +7,7 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +69,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/company/theme', [CompanyController::class, 'updateTheme'])->name('company.theme.update');
         Route::post('/company/domain', [CompanyController::class, 'updateDomain'])->name('company.domain.update');
     });
+
+    
+    Route::get('/set-locale/{locale}', [LocaleController::class, 'setLocale'])
+        ->name('set-locale')
+        ->middleware(['auth', 'verified']);
 });
 
 require __DIR__.'/auth.php';

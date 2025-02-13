@@ -56,7 +56,21 @@
                                     {{ __('Company Settings') }}
                                 </x-dropdown-link>
                             @endif
-                            <div class="border-t border-gray-200"></div>
+
+                            <!-- Language Switcher -->
+                            <div class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-600">
+                                <div class="space-y-2">
+                                    <a href="{{ route('set-locale', 'nl') }}"
+                                        class="block w-full text-left px-2 py-1 rounded-md transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 {{ app()->getLocale() === 'nl' ? 'font-semibold bg-gray-100 dark:bg-gray-800' : '' }}">
+                                        🇳🇱 Nederlands
+                                    </a>
+                                    <a href="{{ route('set-locale', 'en') }}"
+                                        class="block w-full text-left px-2 py-1 rounded-md transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 {{ app()->getLocale() === 'en' ? 'font-semibold bg-gray-100 dark:bg-gray-800' : '' }}">
+                                        🇬🇧 English
+                                    </a>
+                                </div>
+                            </div>
+                            
                             <form method="POST" action="{{ route('logout') }}" class="border-t border-gray-200 dark:border-gray-600">
                             @csrf
                                 <x-dropdown-link :href="route('logout')"

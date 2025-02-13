@@ -1,14 +1,10 @@
-@extends('layouts.app')
-
-@section('title', __('Auctions'))
-
-@section('content')
+<x-app-layout>
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('Auctions') }}</h2>
-            <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">{{ __('Bid on unique items in live auctions') }}</p>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Bid on unique items in live auctions') }}</p>
         </div>
 
         <div class="flex flex-col md:flex-row gap-6">
@@ -80,7 +76,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('Featured Auction') }}</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                                {{ __('Ending in 2h 45m') }}
+                                {{ __('Ending in') }} 2h 45m
                             </span>
                         </div>
                         <p class="text-gray-500 dark:text-gray-400 mb-4">{{ __('Featured auction description goes here...') }}</p>
@@ -163,4 +159,4 @@
         </div>
     </div>
 </div>
-@endsection 
+</x-app-layout>
