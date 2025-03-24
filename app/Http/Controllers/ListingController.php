@@ -2,20 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Advertisement;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class ListingController extends Controller
 {
     /**
      * Display a listing of listings.
      */
-    public function index(Request $request): View
+
+
+    public function index()
     {
-        // TODO: Implement filtering, sorting, and pagination
-        return view('listings.index');
+        $query = Advertisement::query();
+        // Exclude purchased ads for logged-in user
+        if (auth()->check()) {
+            $purchasedIds = auth()->user()->purchases()->pluck('advertisement_id')->toArray();
+            $query->whereNotIn('id', $purchasedIds);
+        }
+
+        $advertisements = $query->latest()->paginate(9);
+
+        return view('listings.index', compact('advertisements'));
     }
+
 
     /**
      * Show the form for creating a new listing.
@@ -38,10 +50,10 @@ class ListingController extends Controller
     /**
      * Display the specified listing.
      */
-    public function show(string $id): View
+
+    public function show(Advertisement $advertisement)
     {
-        // TODO: Implement listing retrieval
-        return view('listings.show');
+        return view('listings.show', compact('advertisement'));
     }
 
     /**
@@ -62,6 +74,7 @@ class ListingController extends Controller
         return redirect()->route('listings.show', $id)
             ->with('success', __('Listing updated successfully.'));
     }
+
 
     /**
      * Remove the specified listing from storage.

@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Advertisement;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
+
     /**
      * Display the home page.
      */
     public function index(): View
     {
-        // TODO: Get featured listings, rentals, and auctions
-        return view('home');
+        $advertisements = Advertisement::latest()->take(10)->get();
+
+        return view('home', compact('advertisements'));
     }
+
 
     /**
      * Display the about page.

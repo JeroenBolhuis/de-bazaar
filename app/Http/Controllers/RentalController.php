@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Advertisement;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class RentalController extends Controller
 {
     /**
      * Display a listing of rentals.
      */
-    public function index(Request $request): View
+    public function index()
     {
-        // TODO: Implement filtering, sorting, and pagination
-        return view('rentals.index');
+        $rentals = Advertisement::where('type', 'rental')->with('reviews')->latest()->paginate(9);
+        return view('rentals.index', compact('rentals'));
     }
+
 
     /**
      * Show the form for creating a new rental.

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed basic data
+        // Seed basic data (user types, roles, companies first!)
         $this->call([
             UserTypeSeeder::class,
             RoleSeeder::class,
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
                 });
         }
 
-        // Create some additional regular users
+        // Additional users & sellers
         User::factory()
             ->count(10)
             ->create([
@@ -87,7 +87,6 @@ class DatabaseSeeder extends Seeder
                 $user->roles()->attach(Role::where('slug', 'user')->first());
             });
 
-        // Create some additional private sellers
         User::factory()
             ->privateAdvertiser()
             ->count(5)
@@ -97,5 +96,9 @@ class DatabaseSeeder extends Seeder
             ->each(function ($seller) {
                 $seller->roles()->attach(Role::where('slug', 'private-seller')->first());
             });
+
+        $this->call([
+            AdvertisementSeeder::class,
+        ]);
     }
 }

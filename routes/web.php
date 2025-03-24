@@ -1,13 +1,16 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ListingController;
-use App\Http\Controllers\RentalController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ListingController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\RentalController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,11 +34,30 @@ Route::get('/rentals/{rental}', [RentalController::class, 'show'])->name('rental
 Route::get('/auctions', [AuctionController::class, 'index'])->name('auctions.index');
 Route::get('/auctions/{auction}', [AuctionController::class, 'show'])->name('auctions.show');
 
+// Favorites route
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/advertisements/{advertisement}/favorite', [FavoriteController::class, 'toggle'])->name('advertisements.favorite');
+});
+
+Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+});
+
+Route::get('/advertisements/{advertisement}', [ListingController::class, 'show'])->name('advertisements.show');
+
+Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
+
+Route::post('/rentals/{advertisement}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
+
 // Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -70,10 +92,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/company/domain', [CompanyController::class, 'updateDomain'])->name('company.domain.update');
     });
 
-    
+
     Route::get('/set-locale/{locale}', [LocaleController::class, 'setLocale'])
         ->name('set-locale')
         ->middleware(['auth', 'verified']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
