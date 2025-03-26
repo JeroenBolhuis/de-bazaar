@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            $table->string('type')->array(['regular', 'rental', 'auction'])->default('regular');
+            $table->enum('type', ['regular', 'rental', 'auction'])->default('regular');
         });
     }
 

@@ -6,45 +6,45 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
-class CompanyController extends Controller
+class BusinessController extends Controller
 {
     /**
-     * Display company settings.
+     * Display business settings.
      */
     public function settings(): View
     {
-        // TODO: Implement company settings retrieval
-        return view('company.settings');
+        // TODO: Implement business settings retrieval
+        return view('business.settings');
     }
 
     /**
-     * Update company settings.
+     * Update business settings.
      */
     public function updateSettings(Request $request): RedirectResponse
     {
         // TODO: Implement settings update
-        return redirect()->route('company.settings')
-            ->with('success', __('Company settings updated successfully.'));
+        return redirect()->route('business.settings')
+            ->with('success', __('Business settings updated successfully.'));
     }
 
     /**
-     * Update company theme settings.
+     * Update business theme settings.
      */
     public function updateTheme(Request $request): RedirectResponse
     {
         // TODO: Implement theme update
-        return redirect()->route('company.settings')
-            ->with('success', __('Company theme updated successfully.'));
+        return redirect()->route('business.settings')
+            ->with('success', __('Business theme updated successfully.'));
     }
 
     /**
-     * Update company domain settings.
+     * Update business domain settings.
      */
     public function updateDomain(Request $request): RedirectResponse
     {
         // TODO: Implement domain update
-        return redirect()->route('company.settings')
-            ->with('success', __('Company domain updated successfully.'));
+        return redirect()->route('business.settings')
+            ->with('success', __('Business domain updated successfully.'));
     }
 
     /**
@@ -53,7 +53,7 @@ class CompanyController extends Controller
     public function landingPage(): View
     {
         // TODO: Implement landing page builder
-        return view('company.landing-page');
+        return view('business.landing-page');
     }
 
     /**
@@ -62,7 +62,7 @@ class CompanyController extends Controller
     public function updateLandingPage(Request $request): RedirectResponse
     {
         // TODO: Implement landing page update
-        return redirect()->route('company.landing-page')
+        return redirect()->route('business.landing-page')
             ->with('success', __('Landing page updated successfully.'));
     }
 
@@ -72,7 +72,7 @@ class CompanyController extends Controller
     public function apiSettings(): View
     {
         // TODO: Implement API settings view
-        return view('company.api-settings');
+        return view('business.api-settings');
     }
 
     /**
@@ -81,7 +81,7 @@ class CompanyController extends Controller
     public function generateApiKey(Request $request): RedirectResponse
     {
         // TODO: Implement API key generation
-        return redirect()->route('company.api-settings')
+        return redirect()->route('business.api-settings')
             ->with('success', __('New API key generated successfully.'));
     }
 
@@ -91,7 +91,7 @@ class CompanyController extends Controller
     public function uploadCsv(Request $request): RedirectResponse
     {
         // TODO: Implement CSV upload and processing
-        return redirect()->route('company.settings')
+        return redirect()->route('business.settings')
             ->with('success', __('CSV file processed successfully.'));
     }
 
@@ -101,7 +101,7 @@ class CompanyController extends Controller
     public function contracts(): View
     {
         // TODO: Implement contracts view
-        return view('company.contracts');
+        return view('business.contracts');
     }
 
     /**
@@ -110,7 +110,7 @@ class CompanyController extends Controller
     public function uploadContract(Request $request): RedirectResponse
     {
         // TODO: Implement contract upload
-        return redirect()->route('company.contracts')
+        return redirect()->route('business.contracts')
             ->with('success', __('Contract uploaded successfully.'));
     }
 

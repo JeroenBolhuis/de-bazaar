@@ -50,7 +50,7 @@
 
     "Profile": "Profiel",
     "Dashboard": "Dashboard",
-    "Company Settings": "Bedrijfsinstellingen",
+    "Business Settings": "Bedrijfsinstellingen",
 
     "Log Out": "Uitloggen",
     "Login": "Inloggen",
@@ -70,5 +70,10 @@
     "New Password": "Nieuw wachtwoord",
     "Are you sure you want to delete your account?": "Weet je zeker dat je je account wilt verwijderen?",
     "Once your account is deleted, all of its resources and data will be permanently deleted.": "Zodra je account is verwijderd, worden alle bijbehorende bronnen en gegevens permanent verwijderd.",
-    "Please enter your password to confirm you would like to permanently delete your account.": "Voer je wachtwoord in om te bevestigen dat je je account permanent wilt verwijderen."
+    "Please enter your password to confirm you would like to permanently delete your account.": "Voer je wachtwoord in om te bevestigen dat je je account permanent wilt verwijderen.",
+
+    "Quick Actions": "Snelle Acties"
+
+
+
 } 

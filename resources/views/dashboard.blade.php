@@ -74,7 +74,7 @@
                         </div>
                     </div>
 
-                    @if(Auth::user()->isBusinessUser())
+                    @if(Auth::user()->isBusiness())
                     <!-- Business Stats -->
                     <div class="mb-8">
                         <h3 class="text-lg font-medium mb-4">{{ __('Business Statistics') }}</h3>
