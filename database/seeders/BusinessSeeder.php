@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Company;
+use App\Models\Business;
 use Illuminate\Database\Seeder;
 
-class CompanySeeder extends Seeder
+class BusinessSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Company::factory()->create([
+        Business::factory()->create([
             'name' => 'Tech Traders',
             'domain' => 'techtraders.debazaar.test',
             'theme_settings' => json_encode([
@@ -21,7 +21,7 @@ class CompanySeeder extends Seeder
                 'font_family' => 'Inter',
             ])
         ]);
-        Company::factory()->create([
+        Business::factory()->create([
             'name' => 'Home & Garden Plus',
             'domain' => 'homeandgarden.debazaar.test',
             'theme_settings' => json_encode([
@@ -30,7 +30,7 @@ class CompanySeeder extends Seeder
                 'font_family' => 'Inter',
             ])
         ]);
-        Company::factory()->create([
+        Business::factory()->create([
             'name' => 'Vintage Collectibles',
             'domain' => 'vintage.debazaar.test',
             'theme_settings' => json_encode([

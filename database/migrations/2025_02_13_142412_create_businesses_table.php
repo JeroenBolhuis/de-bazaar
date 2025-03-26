@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('businesses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('kvk_number')->unique();
-            $table->integer('vat_number')->unique();
+            $table->string('kvk_number', 20)->unique();
+            $table->string('vat_number', 20)->unique();
             $table->string('domain')->unique();
             $table->json('theme_settings')->nullable();
             $table->timestamps();
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('business_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('businesses');
     }
 };

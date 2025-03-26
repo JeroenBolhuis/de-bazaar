@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AuctionController;
-use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
@@ -44,7 +44,7 @@ Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::cla
 Route::post('/rentals/{advertisement}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
 
 // Authenticated routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -74,12 +74,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/auctions/{auction}', [AuctionController::class, 'update'])->name('auctions.update');
     Route::delete('/auctions/{auction}', [AuctionController::class, 'destroy'])->name('auctions.destroy');
 
-    // Company settings (for business users)
-    Route::middleware(['can:manage-company'])->group(function () {
-        Route::get('/company/settings', [CompanyController::class, 'settings'])->name('company.settings');
-        Route::put('/company/settings', [CompanyController::class, 'updateSettings'])->name('company.settings.update');
-        Route::post('/company/theme', [CompanyController::class, 'updateTheme'])->name('company.theme.update');
-        Route::post('/company/domain', [CompanyController::class, 'updateDomain'])->name('company.domain.update');
+    // Business settings (for business users)
+    Route::middleware(['can:manage-business'])->group(function () {
+        Route::get('/business/settings', [BusinessController::class, 'settings'])->name('business.settings');
+        Route::put('/business/settings', [BusinessController::class, 'updateSettings'])->name('business.settings.update');
+        Route::post('/business/theme', [BusinessController::class, 'updateTheme'])->name('business.theme.update');
+        Route::post('/business/domain', [BusinessController::class, 'updateDomain'])->name('business.domain.update');
     });
 
     // Favorites route    

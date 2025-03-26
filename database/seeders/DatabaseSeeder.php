@@ -11,10 +11,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed basic data (user types, roles, companies first!)
+        // Seed basic data (user types, roles, businesses first!)
         $this->call([
             UserSeeder::class,
-            CompanySeeder::class,
+            BusinessSeeder::class,
             AdvertisementSeeder::class,
         ]);
     }

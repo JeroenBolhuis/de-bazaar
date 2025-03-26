@@ -33,7 +33,7 @@ class DashboardController extends Controller
 
         // Get business stats if user is a business user
         $businessStats = null;
-        if ($user->isCompany()) {
+        if ($user->isBusiness()) {
             $businessStats = [
                 'total_revenue' => 0, // TODO: Implement total revenue
                 'active_contracts' => 0, // TODO: Implement active contracts count

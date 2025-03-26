@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
@@ -23,7 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
-        'company_id',
+        'business_id',
         'phone',
         'address',
         'city',
@@ -86,13 +85,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'seller';
     }
 
-    public function isCompany()
+    public function isBusiness()
     {
-        return $this->role === 'company';
+        return $this->role === 'business';
     }
 
-    public function company()
+    public function business()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Business::class);
     }
 }
