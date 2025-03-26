@@ -22,16 +22,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'user_type_id',
-        'company_name',
-        'kvk_number',
-        'vat_number',
+        'role',
+        'company_id',
         'phone',
         'address',
         'city',
         'postal_code',
         'country',
-        'language',
     ];
 
     /**
@@ -74,35 +71,28 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Review::class);
     }
 
-
     public function advertisements()
     {
         return $this->hasMany(Advertisement::class);
     }
 
-
-    public function roles()
+    public function isAdmin()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->role === 'admin';
     }
 
-    public function userType()
+    public function isSeller()
     {
-        return $this->belongsTo(UserType::class);
+        return $this->role === 'seller';
     }
 
-    public function hasRole($role)
+    public function isCompany()
     {
-        return $this->roles->contains('slug', $role);
+        return $this->role === 'company';
     }
 
-    public function isBusinessUser()
+    public function company()
     {
-        return $this->userType && $this->userType->is_business;
-    }
-
-    public function canAdvertise()
-    {
-        return $this->userType && $this->userType->can_advertise;
+        return $this->belongsTo(Company::class);
     }
 }

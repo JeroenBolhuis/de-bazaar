@@ -64,7 +64,7 @@
                                 <x-dropdown-link :href="route('dashboard')">
                                     {{ __('Dashboard') }}
                                 </x-dropdown-link>
-                                @if(Auth::user()->isBusinessUser())
+                                @if(Auth::user()->isCompany())
                                     <x-dropdown-link :href="route('company.settings')">
                                         {{ __('Company Settings') }}
                                     </x-dropdown-link>
@@ -154,7 +154,7 @@
                     <x-responsive-nav-link :href="route('dashboard')">
                         {{ __('Dashboard') }}
                     </x-responsive-nav-link>
-                    @if(Auth::user()->isBusinessUser())
+                    @if(Auth::user()->isCompany())
                         <x-responsive-nav-link :href="route('company.settings')">
                             {{ __('Company Settings') }}
                         </x-responsive-nav-link>

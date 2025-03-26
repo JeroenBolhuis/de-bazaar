@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->integer('kvk_number')->unique();
+            $table->integer('vat_number')->unique();
             $table->string('domain')->unique();
-            $table->text('description')->nullable();
             $table->json('theme_settings')->nullable();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
-            $table->softDeletes();
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 
