@@ -1,12 +1,13 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
-use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RentalController;
@@ -34,18 +35,7 @@ Route::get('/rentals/{rental}', [RentalController::class, 'show'])->name('rental
 Route::get('/auctions', [AuctionController::class, 'index'])->name('auctions.index');
 Route::get('/auctions/{auction}', [AuctionController::class, 'show'])->name('auctions.show');
 
-// Favorites route
 
-Route::middleware(['auth'])->group(function () {
-    Route::post('/advertisements/{advertisement}/favorite', [FavoriteController::class, 'toggle'])->name('advertisements.favorite');
-});
-
-Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
-});
 
 Route::get('/advertisements/{advertisement}', [ListingController::class, 'show'])->name('advertisements.show');
 
@@ -92,10 +82,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/company/domain', [CompanyController::class, 'updateDomain'])->name('company.domain.update');
     });
 
+    // Favorites route    
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/advertisements/{advertisement}/favorite', [FavoriteController::class, 'toggle'])->name('advertisements.favorite');
 
-    Route::get('/set-locale/{locale}', [LocaleController::class, 'setLocale'])
-        ->name('set-locale')
-        ->middleware(['auth', 'verified']);
+    // Purchases route
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
 });
+
+Route::match(['get', 'post'], '/setLocale', function (Request $request) {
+    $locale = $request->input('locale');
+    if (in_array($locale, ['en', 'nl'])) {
+        Session::put('locale', $locale);
+    }
+    return back();
+})->name('setLocale');
 
 require __DIR__ . '/auth.php';

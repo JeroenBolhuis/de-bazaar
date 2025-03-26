@@ -24,12 +24,14 @@
                     <x-nav-link :href="route('auctions.index')" :active="request()->routeIs('auctions.*')">
                         {{ __('Auctions') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
-                        {{ __('Favorites') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
-                        {{ __('My Purchases') }}
-                    </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
+                            {{ __('Favorites') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
+                            {{ __('My Purchases') }}
+                        </x-nav-link>
+                    @endauth
 
                 </div>
             </div>
@@ -69,18 +71,8 @@
                                 @endif
 
                                 <!-- Language Switcher -->
-                                <div
-                                    class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-600">
-                                    <div class="space-y-2">
-                                        <a href="{{ route('set-locale', 'nl') }}"
-                                           class="block w-full text-left px-2 py-1 rounded-md transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 {{ app()->getLocale() === 'nl' ? 'font-semibold bg-gray-100 dark:bg-gray-800' : '' }}">
-                                            🇳🇱 Nederlands
-                                        </a>
-                                        <a href="{{ route('set-locale', 'en') }}"
-                                           class="block w-full text-left px-2 py-1 rounded-md transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 {{ app()->getLocale() === 'en' ? 'font-semibold bg-gray-100 dark:bg-gray-800' : '' }}">
-                                            🇬🇧 English
-                                        </a>
-                                    </div>
+                                <div class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-600">
+                                    @include('components.language_switcher')
                                 </div>
 
                                 <form method="POST" action="{{ route('logout') }}"
@@ -96,9 +88,12 @@
                         </x-dropdown>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm text-gray-700 underline">{{ __('Login') }}</a>
-                    <a href="{{ route('register') }}"
-                       class="ml-4 text-sm text-gray-700 underline">{{ __('Register') }}</a>
+                    <div class="flex items-center gap-4">
+                        <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-300 underline">{{ __('Login') }}</a>
+                        <a href="{{ route('register') }}"
+                                class="text-sm text-gray-700 dark:text-gray-300 underline">{{ __('Register') }}</a>
+                        @include('components.language_switcher')
+                    </div>
                 @endauth
             </div>
 
@@ -133,12 +128,14 @@
             <x-responsive-nav-link :href="route('auctions.index')" :active="request()->routeIs('auctions.*')">
                 {{ __('Auctions') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
-                {{ __('Favorites') }}
-            </x-responsive-nav-link>
-            <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
-                {{ __('My Purchases') }}
-            </x-nav-link>
+            @auth
+                <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
+                    {{ __('Favorites') }}
+                </x-responsive-nav-link>
+                <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
+                    {{ __('My Purchases') }}
+                </x-nav-link>
+            @endauth
 
         </div>
 
