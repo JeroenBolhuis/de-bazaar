@@ -18,59 +18,12 @@ class AuctionController extends Controller
     }
 
     /**
-     * Show the form for creating a new auction.
-     */
-    public function create(): View
-    {
-        return view('auctions.create');
-    }
-
-    /**
-     * Store a newly created auction in storage.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        // TODO: Implement auction creation
-        return redirect()->route('auctions.index')
-            ->with('success', __('Auction created successfully.'));
-    }
-
-    /**
      * Display the specified auction.
      */
     public function show(string $id): View
     {
         // TODO: Implement auction retrieval with real-time bidding
         return view('auctions.show');
-    }
-
-    /**
-     * Show the form for editing the specified auction.
-     */
-    public function edit(string $id): View
-    {
-        // TODO: Implement auction retrieval for editing
-        return view('auctions.edit');
-    }
-
-    /**
-     * Update the specified auction in storage.
-     */
-    public function update(Request $request, string $id): RedirectResponse
-    {
-        // TODO: Implement auction update
-        return redirect()->route('auctions.show', $id)
-            ->with('success', __('Auction updated successfully.'));
-    }
-
-    /**
-     * Remove the specified auction from storage.
-     */
-    public function destroy(string $id): RedirectResponse
-    {
-        // TODO: Implement auction deletion
-        return redirect()->route('auctions.index')
-            ->with('success', __('Auction deleted successfully.'));
     }
 
     /**

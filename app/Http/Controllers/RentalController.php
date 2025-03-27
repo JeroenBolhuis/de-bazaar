@@ -18,25 +18,6 @@ class RentalController extends Controller
         return view('rentals.index', compact('rentals'));
     }
 
-
-    /**
-     * Show the form for creating a new rental.
-     */
-    public function create(): View
-    {
-        return view('rentals.create');
-    }
-
-    /**
-     * Store a newly created rental in storage.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        // TODO: Implement rental creation
-        return redirect()->route('rentals.index')
-            ->with('success', __('Rental listing created successfully.'));
-    }
-
     /**
      * Display the specified rental.
      */
@@ -44,35 +25,6 @@ class RentalController extends Controller
     {
         // TODO: Implement rental retrieval
         return view('rentals.show');
-    }
-
-    /**
-     * Show the form for editing the specified rental.
-     */
-    public function edit(string $id): View
-    {
-        // TODO: Implement rental retrieval for editing
-        return view('rentals.edit');
-    }
-
-    /**
-     * Update the specified rental in storage.
-     */
-    public function update(Request $request, string $id): RedirectResponse
-    {
-        // TODO: Implement rental update
-        return redirect()->route('rentals.show', $id)
-            ->with('success', __('Rental listing updated successfully.'));
-    }
-
-    /**
-     * Remove the specified rental from storage.
-     */
-    public function destroy(string $id): RedirectResponse
-    {
-        // TODO: Implement rental deletion
-        return redirect()->route('rentals.index')
-            ->with('success', __('Rental listing deleted successfully.'));
     }
 
     /**

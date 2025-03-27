@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdvertisementController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,9 +38,8 @@ Route::get('/auctions/{auction}', [AuctionController::class, 'show'])->name('auc
 
 
 
-Route::get('/advertisements/{advertisement}', [ListingController::class, 'show'])->name('advertisements.show');
-
-Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
+Route::get('/listings/{advertisement}', [ListingController::class, 'show'])->name('advertisements.show');
+Route::post('/listings/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
 
 Route::post('/rentals/{advertisement}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
 
@@ -52,6 +52,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Advertisements management
+    Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
+    Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
 
     // Listings management
     Route::get('/listings/create', [ListingController::class, 'create'])->name('listings.create');
