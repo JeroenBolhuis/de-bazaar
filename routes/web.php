@@ -13,6 +13,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdvertisementController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,6 +55,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
     Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
     Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
+    Route::get('/advertisements/{advertisement}/review', [ReviewController::class, 'createAdvertisementReview'])->name('advertisements.review');
+    Route::post('/advertisements/{advertisement}/review', [ReviewController::class, 'storeAdvertisementReview'])->name('advertisements.review.store');
+    
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/review', [ReviewController::class, 'createUserReview'])->name('users.review');
+    Route::post('/users/{user}/review', [ReviewController::class, 'storeUserReview'])->name('users.review.store');
     
 
     // Listings management
