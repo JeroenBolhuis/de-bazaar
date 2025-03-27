@@ -169,6 +169,11 @@
                             {{ __('Business Settings') }}
                         </x-responsive-nav-link>
                     @endif
+                    
+                    <!-- Language Switcher -->
+                    <div class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-600">
+                        @include('components.language_switcher')
+                    </div>
 
                     <!-- Authentication -->
                     <form method="POST" action="{{ route('logout') }}">
