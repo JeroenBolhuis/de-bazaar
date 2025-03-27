@@ -34,6 +34,16 @@ class Advertisement extends Model
         return $this->hasMany(AdvertisementReview::class);
     }
 
+    public function reviewAverage()
+    {
+        return $this->reviews()->avg('rating');
+    }
+
+    public function reviewCount()
+    {
+        return $this->reviews()->count();
+    }
+
 
     public function relatedAdvertisements()
     {
