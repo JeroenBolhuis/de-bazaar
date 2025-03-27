@@ -70,16 +70,6 @@ class User extends Authenticatable
         return $this->hasMany(UserReview::class);
     }
 
-    public function reviewAverage()
-    {
-        return $this->reviews()->avg('rating');
-    }
-
-    public function reviewCount()
-    {
-        return $this->reviews()->count();
-    }
-
     public function advertisements()
     {
         return $this->hasMany(Advertisement::class);
