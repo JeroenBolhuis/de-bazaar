@@ -4,18 +4,19 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100">
                 <!-- Back Button -->
                 <div class="mb-6">
-                    <a href="{{ route('advertisements.show', $advertisement) }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    <a href="{{ url()->previous() }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to Advertisement
+                        Back
                     </a>
                 </div>
 
-                <h1 class="text-2xl font-bold mb-6">Review for {{ $advertisement->title }}</h1>
+                <h1 class="text-2xl font-bold mb-6">Review for {{ $user->name }}</h1>
 
-                <form action="{{ route('advertisements.review.store', $advertisement) }}" method="POST">
+                <form action="{{ route('users.review.store', $user) }}" method="POST">
                     @csrf
+                    <input type="hidden" name="redirect_to" value="{{ url()->previous() }}">
 
                     <!-- Star Rating -->
                     <div class="mb-6">
@@ -34,7 +35,7 @@
                             name="comment"
                             rows="4"
                             class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Share your experience..."
+                            placeholder="Share your experience with this user..."
                         >{{ old('comment') }}</textarea>
                         @error('comment')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -50,7 +51,7 @@
                             Submit Review
                         </button>
                         <a
-                            href="{{ route('advertisements.show', $advertisement) }}"
+                            href="{{ url()->previous() }}"
                             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                         >
                             Cancel
