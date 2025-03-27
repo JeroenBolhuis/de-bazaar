@@ -31,6 +31,11 @@
                         <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
                             {{ __('My Purchases') }}
                         </x-nav-link>
+                        @if(Auth::user()->canSell)
+                            <x-nav-link :href="route('advertisements.create')" :active="request()->routeIs('advertisements.create')">
+                                {{ __('Create Advertisement') }}
+                            </x-nav-link>
+                        @endif
                     @endauth
 
                 </div>
@@ -135,6 +140,11 @@
                 <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
                     {{ __('My Purchases') }}
                 </x-nav-link>
+                @if(Auth::user()->canSell)
+                    <x-responsive-nav-link :href="route('advertisements.create')" :active="request()->routeIs('advertisements.create')">
+                        {{ __('Create Advertisement') }}
+                    </x-responsive-nav-link>
+                @endif
             @endauth
 
         </div>

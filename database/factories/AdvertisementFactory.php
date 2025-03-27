@@ -17,7 +17,18 @@ class AdvertisementFactory extends Factory
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
             'price' => $this->faker->randomFloat(2, 10, 500),
-            'type' => $this->faker->randomElement(['regular', 'rental', 'auction']),
+            'type' => $this->faker->randomElement(['listing', 'rental', 'auction']),
+            'image' => null,
+            'is_active' => true,
+            
+            // auction specific fields
+            'auction_start_date' => null,
+            'auction_end_date' => null,
+            'auction_start_price' => 0,
+            
+            // rental specific fields
+            'condition' => 100,
+            'wear_per_day' => 0,
         ];
     }
 }

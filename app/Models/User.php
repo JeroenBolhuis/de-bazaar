@@ -80,9 +80,9 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isSeller()
+    public function getCanSellAttribute()
     {
-        return $this->role === 'seller';
+        return ($this->role === 'seller' || $this->role === 'business');
     }
 
     public function isBusiness()
