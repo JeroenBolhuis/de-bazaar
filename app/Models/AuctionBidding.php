@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Review extends Model
+class AuctionBidding extends Model
 {
-    use HasFactory;
-
-    protected $fillable = ['user_id', 'advertisement_id', 'rating', 'comment'];
-
+    protected $fillable = [
+        'user_id',
+        'advertisement_id',
+        'amount',
+    ];
+    
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -19,5 +20,5 @@ class Review extends Model
     public function advertisement()
     {
         return $this->belongsTo(Advertisement::class);
-    }
+    }    
 }
