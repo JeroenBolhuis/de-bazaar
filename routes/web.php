@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
     Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
     Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
+    Route::get('/advertisements/{advertisement}/review', [ReviewController::class, 'create'])->name('advertisements.review');
+    Route::post('/advertisements/{advertisement}/review', [ReviewController::class, 'store'])->name('advertisements.review.store');
     
 
     // Listings management
