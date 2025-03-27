@@ -24,7 +24,6 @@ return new class extends Migration
             // auction specific fields
             $table->dateTime('auction_start_date')->nullable();
             $table->dateTime('auction_end_date')->nullable();
-            $table->decimal('auction_start_price', 10, 2)->default(0);
 
             // rental specific fields
             $table->float('condition')->default(100);

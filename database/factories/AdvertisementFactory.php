@@ -21,14 +21,12 @@ class AdvertisementFactory extends Factory
             'image' => null,
             'is_active' => true,
             
-            // auction specific fields
-            'auction_start_date' => null,
-            'auction_end_date' => null,
-            'auction_start_price' => 0,
+            'auction_start_date' => $this->faker->date,
+            'auction_end_date' => $this->faker->date,
             
             // rental specific fields
-            'condition' => 100,
-            'wear_per_day' => 0,
+            'condition' => $this->faker->numberBetween(0, 100),
+            'wear_per_day' => $this->faker->numberBetween(0, 50),
         ];
     }
 }

@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('advertisement_reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('reviewer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('advertisement_id')->constrained()->onDelete('cascade');
             $table->tinyInteger('rating'); // 1-5 sterren
             $table->text('comment')->nullable();
@@ -21,8 +21,8 @@ return new class extends Migration {
 
         Schema::create('user_reviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('reviewer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('advertisement_id')->constrained()->onDelete('cascade');
             $table->tinyInteger('rating'); // 1-5 sterren
             $table->text('comment')->nullable();
             $table->timestamps();

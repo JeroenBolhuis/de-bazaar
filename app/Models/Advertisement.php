@@ -15,6 +15,13 @@ class Advertisement extends Model
         'description',
         'price',
         'type',
+        'auction_start_date',
+        'auction_end_date',
+        'condition',
+        'wear_per_day',
+        'image',
+        'is_active',
+
     ];
 
     public function user()
@@ -24,7 +31,7 @@ class Advertisement extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(AdvertisementReview::class);
     }
 
 
@@ -35,7 +42,7 @@ class Advertisement extends Model
 
     public function bids()
     {
-        return $this->hasMany(Bid::class);
+        return $this->hasMany(AuctionBidding::class);
     }
 
     public function rentalPeriods()
@@ -54,5 +61,12 @@ class Advertisement extends Model
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+
+    public function highestBidOrPrice()
+    {
+        return $this->hasOne(AuctionBidding::class)->orderBy('amount', 'desc')->withDefault(function ($bidding) {
+            $bidding->amount = $this->price;
+        });
     }
 }
