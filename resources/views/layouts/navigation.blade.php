@@ -6,23 +6,17 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800"/>
+                        <x-application-logo class="block h-9 w-auto" :active="request()->routeIs('home')"/>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                        {{ __('Home') }}
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('listings.index')" :active="request()->routeIs('listings.*')">
-                        {{ __('Listings') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('rentals.index')" :active="request()->routeIs('rentals.*')">
-                        {{ __('Rentals') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('auctions.index')" :active="request()->routeIs('auctions.*')">
-                        {{ __('Auctions') }}
+                    <x-nav-link :href="route('advertisements.index')" :active="request()->routeIs('advertisements.*')">
+                        {{ __('Advertisements') }}
                     </x-nav-link>
                     @auth
                         <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
@@ -31,11 +25,6 @@
                         <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
                             {{ __('My Purchases') }}
                         </x-nav-link>
-                        @if(Auth::user()->canSell)
-                            <x-nav-link :href="route('advertisements.create')" :active="request()->routeIs('advertisements.create')">
-                                {{ __('Create Advertisement') }}
-                            </x-nav-link>
-                        @endif
                     @endauth
 
                 </div>
@@ -121,17 +110,11 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                {{ __('Home') }}
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('listings.index')" :active="request()->routeIs('listings.*')">
-                {{ __('Listings') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('rentals.index')" :active="request()->routeIs('rentals.*')">
-                {{ __('Rentals') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('auctions.index')" :active="request()->routeIs('auctions.*')">
-                {{ __('Auctions') }}
+            <x-responsive-nav-link :href="route('advertisements.index')" :active="request()->routeIs('advertisements.*')">
+                {{ __('Advertisements') }}
             </x-responsive-nav-link>
             @auth
                 <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
@@ -140,11 +123,6 @@
                 <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
                     {{ __('My Purchases') }}
                 </x-nav-link>
-                @if(Auth::user()->canSell)
-                    <x-responsive-nav-link :href="route('advertisements.create')" :active="request()->routeIs('advertisements.create')">
-                        {{ __('Create Advertisement') }}
-                    </x-responsive-nav-link>
-                @endif
             @endauth
 
         </div>
