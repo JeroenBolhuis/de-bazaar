@@ -29,19 +29,33 @@
                                 <span class="text-gray-400 dark:text-gray-500">No image available</span>
                             </div>
                         @endif
+
                     </div>
 
                     <!-- Details Section -->
                     <div class="flex flex-col gap-4">
-                        <h1 class="text-3xl font-bold dark:text-white">{{ $advertisement->title }}</h1>
-                        <p class="text-gray-600 dark:text-gray-300">{{ $advertisement->description }}</p>
-                        
-                        <!-- Price Section -->
-                        <div class="text-2xl font-semibold dark:text-white">
-                            €{{ number_format($advertisement->highestBidOrPrice->amount, 2) }}
-                            @if($advertisement->type === 'rental')
-                                <span class="text-base font-normal text-gray-600 dark:text-gray-400">/day</span>
-                            @endif
+                        <div class="flex items-between gap-4">
+                            <div>
+                                <h1 class="text-3xl font-bold dark:text-white">{{ $advertisement->title }}</h1>
+                                <p class="text-gray-600 dark:text-gray-300">{{ $advertisement->description }}</p>
+                                
+                                <!-- Price Section -->
+                                <div class="text-2xl font-semibold dark:text-white">
+                                    €{{ number_format($advertisement->highestBidOrPrice->amount, 2) }}
+                                    @if($advertisement->type === 'rental')
+                                        <span class="text-base font-normal text-gray-600 dark:text-gray-400">/day</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <!-- QR Code Section -->
+                            <div>
+                                <div class="flex flex-col items-center bg-gray-50 dark:bg-gray-700 p-3 rounded-lg shadow-sm inline-block">
+                                    <div class="bg-white p-2 rounded-md">
+                                        {!! QrCode::size(120)->errorCorrection('H')->margin(1)->generate(route('advertisements.show', $advertisement)) !!}
+                                    </div>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 mt-2">Scan with your phone</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Seller Info -->
