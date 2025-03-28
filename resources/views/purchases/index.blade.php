@@ -24,6 +24,7 @@
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6">
                 <form method="GET" action="{{ route('purchases.index') }}" 
                       class="flex flex-col md:flex-row items-start gap-6">
+                    <input type="hidden" name="active_tab" id="active_tab" value="{{ request('active_tab', 'purchases') }}">
                     <div class="flex flex-col sm:flex-row gap-4 flex-grow w-full">
                         <div class="w-full sm:w-2/3">
                             <div class="flex flex-col gap-1.5 w-full">
@@ -47,13 +48,26 @@
                             </div>
                         </div>
 
+                        <!-- Rental State Filter (Only visible in rentals tab) -->
+                        <div id="rental-state-filter" class="w-full sm:w-1/3 hidden">
+                            <div class="flex flex-col gap-1.5 w-full">
+                                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                                <select name="rental_state" 
+                                        class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Statuses</option>
+                                    <option value="active" {{ request('rental_state') == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="upcoming" {{ request('rental_state') == 'upcoming' ? 'selected' : '' }}>Upcoming</option>
+                                    <option value="completed" {{ request('rental_state') == 'completed' ? 'selected' : '' }}>Completed</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="w-full sm:w-1/3">
                             <div class="flex flex-col gap-1.5 w-full">
                                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort By</label>
                                 <select name="sort"
                                         class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="date_desc" {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Newest First</option>
-                                    <option value="date_asc" {{ request('sort') == 'date_asc' ? 'selected' : '' }}>Oldest First</option>
+                                    <option value="date_desc" {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Bought Recently</option>
                                     <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
                                     <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
                                 </select>
@@ -129,7 +143,15 @@
             <!-- Rentals Tab -->
             <div id="rentals-tab" class="tab-content bg-white dark:bg-gray-800 rounded-lg shadow hidden">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Rented Items</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Rented Items</h3>
+                        <a href="{{ route('rentals.calendar') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Calendar View
+                        </a>
+                    </div>
                     @forelse($rentals as $rental)
                         <div class="border-b border-gray-200 dark:border-gray-700 py-4 flex flex-col sm:flex-row justify-between gap-4">
                             <div class="flex-grow">
@@ -218,6 +240,17 @@
                     button.classList.add('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
                 }
             });
+
+            // Show/hide rental state filter based on selected tab
+            const rentalStateFilter = document.getElementById('rental-state-filter');
+            if (tabName === 'rentals') {
+                rentalStateFilter.classList.remove('hidden');
+            } else {
+                rentalStateFilter.classList.add('hidden');
+            }
+
+            // Update hidden field
+            document.getElementById('active_tab').value = tabName;
         }
 
         // Initialize Flatpickr
@@ -242,8 +275,9 @@
                 }
             });
 
-            // Show purchases tab by default
-            showTab('purchases');
+            // Show active tab from URL parameters or default to purchases
+            const activeTab = '{{ request('active_tab', 'purchases') }}';
+            showTab(activeTab);
         });
     </script>
 </x-app-layout>

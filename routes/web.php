@@ -104,6 +104,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Purchases route
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('/purchases/calendar', [PurchaseController::class, 'calendar'])->name('rentals.calendar');
 });
 
 Route::get('/advertisements', [AdvertisementController::class, 'index'])->name('advertisements.index');
