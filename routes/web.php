@@ -9,7 +9,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SalesAndPurchaseController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdvertisementController;
@@ -57,10 +57,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
     });
 
-    Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'buy_advertisement'])->name('advertisements.purchase');
-    Route::post('/advertisements/{advertisement}/rent', [PurchaseController::class, 'rent_advertisement'])->name('advertisements.rent');
-    Route::get('/advertisements/{advertisement}/blocked-dates', [PurchaseController::class, 'getBlockedDates'])->name('advertisements.blocked-dates');
-    Route::post('/advertisements/{advertisement}/bid', [PurchaseController::class, 'bid_advertisement'])->name('advertisements.bid');
+    Route::post('/advertisements/{advertisement}/purchase', [SalesAndPurchaseController::class, 'buy_advertisement'])->name('advertisements.purchase');
+    Route::post('/advertisements/{advertisement}/rent', [SalesAndPurchaseController::class, 'rent_advertisement'])->name('advertisements.rent');
+    Route::get('/advertisements/{advertisement}/blocked-dates', [SalesAndPurchaseController::class, 'getBlockedDates'])->name('advertisements.blocked-dates');
+    Route::post('/advertisements/{advertisement}/bid', [SalesAndPurchaseController::class, 'bid_advertisement'])->name('advertisements.bid');
     Route::get('/advertisements/{advertisement}/review', [ReviewController::class, 'createAdvertisementReview'])->name('advertisements.review');
     Route::post('/advertisements/{advertisement}/review', [ReviewController::class, 'storeAdvertisementReview'])->name('advertisements.review.store');
     
@@ -103,8 +103,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/advertisements/{advertisement}/favorite', [FavoriteController::class, 'toggle'])->name('advertisements.favorite');
 
     // Purchases route
-    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
-    Route::get('/purchases/calendar', [PurchaseController::class, 'calendar'])->name('rentals.calendar');
+    Route::get('/purchases', [SalesAndPurchaseController::class, 'purchases'])->name('purchases.index');
+    Route::get('/purchases/calendar', [SalesAndPurchaseController::class, 'purchasesCalendar'])->name('purchases.calendar');
+    Route::get('/sales', [SalesAndPurchaseController::class, 'sales'])->name('sales.index');
+    Route::get('/sales/calendar', [SalesAndPurchaseController::class, 'salesCalendar'])->name('sales.calendar');
 });
 
 Route::get('/advertisements', [AdvertisementController::class, 'index'])->name('advertisements.index');

@@ -21,7 +21,7 @@ class AdvertisementSeeder extends Seeder
 
         // Genereer bijvoorbeeld 50 advertenties voor elke gebruiker met de rol 'seller' of 'business'
         $sellerAndBusinessUsers = $users->filter(function ($user) {
-            return $user->role === 'seller' || $user->role === 'business';
+            return $user->role === 'seller' || $user->role === 'business' || $user->role === 'admin';
         });
 
         foreach ($sellerAndBusinessUsers as $user) {
