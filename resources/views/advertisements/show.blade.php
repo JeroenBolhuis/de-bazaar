@@ -1,4 +1,8 @@
 <x-app-layout>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    </head>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100 relative">
@@ -48,17 +52,18 @@
                                     @endfor
                                 </div>
                             </a>
-                            <a href="{{ route('users.review', $advertisement->user) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
-                                Add Review
-                            </a>
+                            @if(!(auth()->check() && auth()->id() === $advertisement->user_id))
+                                <a href="{{ route('users.review', $advertisement->user) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+                                    Add Review
+                                </a>
+                            @endif
                         </div>
 
                         <!-- Type-specific Actions -->
-                        @if($advertisement->type === 'listing')
+                        @if($advertisement->type === 'listing' && !(auth()->check() && auth()->id() === $advertisement->user_id))
                             <div class="mt-6">
                                 <form action="{{ route('advertisements.purchase', $advertisement->id) }}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="advertisement_id" value="{{ $advertisement->id }}">
                                     <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
                                         Purchase Now
                                     </button>
@@ -71,51 +76,60 @@
                                     <p class="dark:text-gray-300">Condition: {{ $advertisement->condition }}%</p>
                                     <p class="dark:text-gray-300">Wear per day: {{ $advertisement->wear_per_day }}%</p>
                                 </div>
-                                <form action="{{ route('rentals.store') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="advertisement_id" value="{{ $advertisement->id }}">
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
-                                            <input type="date" name="start_date" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
-                                            <input type="date" name="end_date" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400">
-                                        </div>
-                                        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
-                                            Rent Now
-                                        </button>
+                                @if(!(auth()->check() && auth()->id() === $advertisement->user_id))
+                                    <div class="mt-4">
+                                        <h3 class="text-lg font-semibold mb-2">Rent this item</h3>
+                                        <form action="{{ route('advertisements.rent', $advertisement) }}" method="POST" class="space-y-4">
+                                            @csrf
+                                            <div>
+                                                <label for="date_range" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Rental Period</label>
+                                                <input type="text" id="date_range" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400" placeholder="Select dates..." readonly>
+                                                <input type="hidden" name="start_date" id="start_date">
+                                                <input type="hidden" name="end_date" id="end_date">
+                                            </div>
+                                            <div class="text-sm space-y-2">
+                                                <div id="total-cost" class="hidden">
+                                                    <p class="text-gray-600 dark:text-gray-400">
+                                                        Rental period: <span id="rental-days">0</span> days
+                                                    </p>
+                                                    <p class="font-semibold text-gray-700 dark:text-gray-300">
+                                                        Total cost: €<span id="total-cost-amount">0.00</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                                Rent Now
+                                            </button>
+                                        </form>
                                     </div>
-                                </form>
+                                @endif
                             </div>
                         @elseif($advertisement->type === 'auction')
                             <div class="mt-6 space-y-4">
                                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                     <h3 class="font-semibold dark:text-white">Auction Details</h3>
-                                    <p class="dark:text-gray-300">Start Date: {{ \Carbon\Carbon::parse($advertisement->auction_start_date)->format(app()->getLocale() == 'nl' ? 'd-m-Y H:i' : 'F j, Y g:i A') }}</p>
-                                    <p class="dark:text-gray-300">End Date: {{ \Carbon\Carbon::parse($advertisement->auction_end_date)->format(app()->getLocale() == 'nl' ? 'd-m-Y H:i' : 'F j, Y g:i A') }}</p>
+                                    <p class="dark:text-gray-300">Start Date: {{ $advertisement->auction_start_date->format('d-m-Y H:i') }}</p>
+                                    <p class="dark:text-gray-300">End Date: {{ $advertisement->auction_end_date->format('d-m-Y H:i') }}</p>
                                     @if($advertisement->bids->count() > 0)
                                         <p class="dark:text-gray-300">Current Highest Bid: €{{ number_format($advertisement->bids->max('amount'), 2) }}</p>
                                     @endif
                                 </div>
-                                @if(now()->between($advertisement->auction_start_date, $advertisement->auction_end_date))
-                                    <form action="{{ route('bids.store') }}" method="POST">
+                                @if($advertisement->isAuctionActive() && !(auth()->check() && auth()->id() === $advertisement->user_id))
+                                    <form action="{{ route('advertisements.bid', $advertisement->id) }}" method="POST">
                                         @csrf
-                                        <input type="hidden" name="advertisement_id" value="{{ $advertisement->id }}">
                                         <div class="space-y-4">
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Bid Amount</label>
-                                                <input type="number" name="amount" step="0.01" min="{{ $advertisement->price }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400">
+                                                <input type="number" name="amount" step="0.01" min="{{ $advertisement->bids->max('amount') ?? $advertisement->price }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400">
                                             </div>
                                             <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
                                                 Place Bid
                                             </button>
                                         </div>
                                     </form>
-                                @else
+                                @elseif(!$advertisement->isAuctionActive())
                                     <div class="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                                        @if(now() < $advertisement->auction_start_date)
+                                        @if(now()->lt($advertisement->auction_start_date))
                                             <p class="text-gray-600 dark:text-gray-400">Auction hasn't started yet</p>
                                         @else
                                             <p class="text-gray-600 dark:text-gray-400">Auction has ended</p>
@@ -124,7 +138,6 @@
                                 @endif
                             </div>
                         @endif
-
 
                         <!-- Favorite Button -->
                         @auth
@@ -188,11 +201,13 @@
                                 </svg>
                             @endfor
                         </h2>
-                        <div>
-                            <a href="{{ route('advertisements.review', $advertisement) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
-                                Add Review
-                            </a>
-                        </div>
+                        @if(!(auth()->check() && auth()->id() === $advertisement->user_id))
+                            <div>
+                                <a href="{{ route('advertisements.review', $advertisement) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+                                    Add Review
+                                </a>
+                            </div>
+                        @endif
                     </div>
                     @if($advertisement->reviews->count() > 0)
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -222,4 +237,120 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            // Add custom styles for dark mode and range highlighting
+            const darkModeStyles = `
+                .flatpickr-calendar.dark {
+                    background: #1f2937;
+                    border-color: #374151;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+                }
+                .flatpickr-calendar.dark .flatpickr-months,
+                .flatpickr-calendar.dark .flatpickr-weekdays {
+                    background: #1f2937;
+                }
+                .flatpickr-calendar.dark .flatpickr-month {
+                    color: #fff;
+                }
+                .flatpickr-calendar.dark .flatpickr-weekday {
+                    color: #9ca3af;
+                }
+                .flatpickr-calendar.dark .flatpickr-day {
+                    color: #fff;
+                }
+                .flatpickr-calendar.dark .flatpickr-day.disabled {
+                    color: #6b7280;
+                }
+                .flatpickr-calendar.dark .flatpickr-day.selected,
+                .flatpickr-calendar.dark .flatpickr-day.startRange,
+                .flatpickr-calendar.dark .flatpickr-day.endRange {
+                    background: #4f46e5;
+                    border-color: #4f46e5;
+                    color: #fff;
+                }
+                .flatpickr-calendar.dark .flatpickr-day.inRange {
+                    background: #312e81;
+                    border-color: #312e81;
+                    color: #fff;
+                }
+                .flatpickr-calendar.dark .flatpickr-day:hover {
+                    background: #374151;
+                }
+                .flatpickr-calendar.dark .flatpickr-current-month .flatpickr-monthDropdown-months,
+                .flatpickr-calendar.dark .flatpickr-current-month input.cur-year {
+                    color: #fff;
+                    background: #1f2937;
+                }
+                .flatpickr-calendar.dark .flatpickr-months .flatpickr-prev-month,
+                .flatpickr-calendar.dark .flatpickr-months .flatpickr-next-month {
+                    color: #fff;
+                    fill: #fff;
+                }
+            `;
+
+            // Add styles to document
+            const styleSheet = document.createElement("style");
+            styleSheet.innerText = darkModeStyles;
+            document.head.appendChild(styleSheet);
+
+            const pricePerDay = {{ $advertisement->wear_per_day }};
+            const totalCostDiv = document.getElementById('total-cost');
+            const rentalDaysSpan = document.getElementById('rental-days');
+            const totalCostSpan = document.getElementById('total-cost-amount');
+
+            // Function to calculate days between two dates
+            function calculateDays(start, end) {
+                const diffTime = Math.abs(end - start);
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+
+            // Function to format number as currency
+            function formatCurrency(number) {
+                return number.toFixed(2);
+            }
+
+            // Fetch blocked dates
+            fetch('{{ route('advertisements.blocked-dates', $advertisement) }}')
+                .then(response => response.json())
+                .then(blockedDates => {
+                    // Initialize date range picker
+                    const dateRangePicker = flatpickr("#date_range", {
+                        mode: "range",
+                        minDate: "today",
+                        disable: blockedDates,
+                        dateFormat: "Y-m-d",
+                        showMonths: 2,
+                        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+                        onChange: function(selectedDates) {
+                            if (selectedDates.length === 2) {
+                                const days = calculateDays(selectedDates[0], selectedDates[1]);
+                                const totalCost = days * pricePerDay;
+                                
+                                document.getElementById('start_date').value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                                document.getElementById('end_date').value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                                
+                                rentalDaysSpan.textContent = days;
+                                totalCostSpan.textContent = formatCurrency(totalCost);
+                                totalCostDiv.classList.remove('hidden');
+                            } else {
+                                totalCostDiv.classList.add('hidden');
+                            }
+                        }
+                    });
+
+                    // Update theme when system preference changes
+                    if (window.matchMedia) {
+                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                            dateRangePicker.set('theme', e.matches ? 'dark' : 'light');
+                        });
+                    }
+                });
+        });
+    </script>
 </x-app-layout>
