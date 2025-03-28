@@ -12,18 +12,22 @@
                     <h2 class="text-2xl font-semibold mb-6">{{ __('Dashboard') }}</h2>
 
                     <!-- Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-indigo-50 dark:bg-indigo-900 rounded-lg p-6">
-                            <div class="text-indigo-600 dark:text-indigo-400 text-sm font-medium">{{ __('Active Listings') }}</div>
-                            <div class="mt-2 text-3xl font-semibold">{{ $stats['active_listings'] }}</div>
+                    <div class="grid grid-cols-4 gap-2 md:gap-6 mb-8">
+                        <div class="bg-indigo-50 dark:bg-indigo-900 rounded-lg p-2 md:p-6">
+                            <div class="text-indigo-600 dark:text-indigo-400 text-xs md:text-sm font-medium">{{ __('Active Listings') }}</div>
+                            <div class="mt-2 md:text-3xl font-semibold">{{ $stats['active_listings'] }} / 4</div>
                         </div>
-                        <div class="bg-green-50 dark:bg-green-900 rounded-lg p-6">
-                            <div class="text-green-600 dark:text-green-400 text-sm font-medium">{{ __('Active Rentals') }}</div>
-                            <div class="mt-2 text-3xl font-semibold">{{ $stats['active_rentals'] }}</div>
+                        <div class="bg-green-50 dark:bg-green-900 rounded-lg p-2 md:p-6">
+                            <div class="text-green-600 dark:text-green-400 text-xs md:text-sm font-medium">{{ __('Active Rentals') }}</div>
+                            <div class="mt-2 md:text-3xl font-semibold">{{ $stats['active_rentals'] }} / 4</div>
                         </div>
-                        <div class="bg-purple-50 dark:bg-purple-900 rounded-lg p-6">
-                            <div class="text-purple-600 dark:text-purple-400 text-sm font-medium">{{ __('Active Auctions') }}</div>
-                            <div class="mt-2 text-3xl font-semibold">{{ $stats['active_auctions'] }}</div>
+                        <div class="bg-purple-50 dark:bg-purple-900 rounded-lg p-2 md:p-6">
+                            <div class="text-purple-600 dark:text-purple-400 text-xs md:text-sm font-medium">{{ __('Active Auctions') }}</div>
+                            <div class="mt-2 md:text-3xl font-semibold">{{ $stats['active_auctions'] }} / 4</div>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900 rounded-lg p-2 md:p-6">
+                            <div class="text-red-600 dark:text-red-400 text-xs md:text-sm font-medium">{{ __('Active Biddings') }}</div>
+                            <div class="mt-2 md:text-3xl font-semibold">{{ $stats['active_biddings'] }} / 4</div>
                         </div>
                     </div>
 

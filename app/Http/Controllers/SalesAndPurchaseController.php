@@ -394,6 +394,14 @@ class SalesAndPurchaseController extends Controller
             return back()->with('error', 'This advertisement is not an auction.');
         }
 
+        // Directly check the count in the database
+        $bidCount = AuctionBidding::where('user_id', $user_id)->count();
+        
+        // Check if limit reached
+        if ($bidCount >= 4) {
+            return back()->with('error', 'You have reached the maximum limit of bids (4).');
+        }
+
         // Check if auction is active
         if (!$advertisement->isAuctionActive()) {
             if (now()->lt($advertisement->auction_start_date)) {
@@ -407,12 +415,12 @@ class SalesAndPurchaseController extends Controller
             'amount' => [
                 'required',
                 'numeric',
-                'min:' . ($advertisement->bids()->max('amount') ?? $advertisement->price),
+                'min:' . ($advertisement->auctionBiddings()->max('amount') ?? $advertisement->price),
             ],
         ]);
 
         // Create the bid
-        $bid = new Bid();
+        $bid = new AuctionBidding();
         $bid->advertisement_id = $advertisement->id;
         $bid->user_id = $user_id;
         $bid->amount = $verified['amount'];

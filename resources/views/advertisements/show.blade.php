@@ -34,7 +34,7 @@
 
                     <!-- Details Section -->
                     <div class="flex flex-col gap-4">
-                        <div class="flex items-between gap-4">
+                        <div class="flex justify-between gap-4">
                             <div>
                                 <h1 class="text-3xl font-bold dark:text-white">{{ $advertisement->title }}</h1>
                                 <p class="text-gray-600 dark:text-gray-300">{{ $advertisement->description }}</p>
