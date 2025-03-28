@@ -1,6 +1,7 @@
 <x-app-layout>
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     @endpush
 
     <div class="py-12">
@@ -164,6 +165,19 @@
                     </div>
                 </div>
 
+                <!-- Related Advertisements Section -->
+                <div class="mt-6">
+                    <x-input-label for="related_advertisements" :value="__('Related Advertisements')" />
+                    <select id="related_advertisements" name="related_advertisements[]" multiple class="mt-1 block w-full">
+                        @foreach(Auth::user()->advertisements()->where('type', '!=', 'auction')->get() as $advert)
+                            <option value="{{ $advert->id }}" {{ in_array($advert->id, old('related_advertisements', [])) ? 'selected' : '' }}>
+                                {{ $advert->title }} - €{{ number_format($advert->price, 2) }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <x-input-error :messages="$errors->get('related_advertisements')" class="mt-2" />
+                </div>
+
                 <button type="submit" class="mt-6 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white uppercase tracking-widest hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     {{ __('Create Listing') }}
                 </button>
@@ -173,8 +187,16 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Initialize TomSelect for related advertisements
+                new TomSelect('#related_advertisements', {
+                    plugins: ['remove_button'],
+                    maxItems: null,
+                    placeholder: 'Select related advertisements...',
+                });
+
                 const typeSelect = document.getElementById('type');
                 const auctionFields = document.getElementById('auction-fields');
                 const rentalFields = document.getElementById('rental-fields');

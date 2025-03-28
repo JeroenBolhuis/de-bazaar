@@ -308,6 +308,34 @@
                         <p class="text-gray-500 dark:text-gray-400">No reviews yet.</p>
                     @endif
                 </div>
+
+                <!-- Related Advertisements Section -->
+                <div class="mt-8 border-t dark:border-gray-700 pt-8">
+                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Related Advertisements</h2>
+                    <div class="overflow-x-auto">
+                        <div class="flex space-x-4 pb-4">
+                            @forelse($advertisement->relatedAdvertisements as $related)
+                                <div class="flex-none w-64">
+                                    <a href="{{ route('advertisements.show', $related) }}" class="block bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                                        @if($related->image)
+                                            <img src="{{ Storage::url($related->image) }}" alt="{{ $related->title }}" class="w-full h-40 object-cover">
+                                        @else
+                                            <div class="w-full h-40 bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                                <span class="text-gray-400 dark:text-gray-500">No image</span>
+                                            </div>
+                                        @endif
+                                        <div class="p-4">
+                                            <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ $related->title }}</h3>
+                                            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">€{{ number_format($related->price, 2) }}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            @empty
+                                <p class="text-gray-500 dark:text-gray-400">No related advertisements.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

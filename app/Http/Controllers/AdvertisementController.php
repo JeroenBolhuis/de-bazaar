@@ -166,6 +166,11 @@ class AdvertisementController extends Controller
         // Create the advertisement
         $advertisement = Advertisement::create($validated);
 
+        // Handle related advertisements
+        if ($request->has('related_advertisements')) {
+            $advertisement->relatedAdvertisements()->attach($request->related_advertisements);
+        }
+
         return redirect()->route('advertisements.show', $advertisement);
     }
 
