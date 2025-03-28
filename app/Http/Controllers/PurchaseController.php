@@ -17,10 +17,10 @@ class PurchaseController extends Controller
             ->where('user_id', auth()->id());
 
         // Filters
-        if ($request->has('start_date')) {
+        if ($request->filled('start_date')) {
             $listingsQuery->whereDate('purchase_date', '>=', $request->start_date);
         }
-        if ($request->has('end_date')) {
+        if ($request->filled('end_date')) {
             $listingsQuery->whereDate('purchase_date', '<=', $request->end_date);
         }
 
@@ -38,10 +38,10 @@ class PurchaseController extends Controller
             ->where('user_id', auth()->id());
 
         // Filters
-        if ($request->has('start_date')) {
+        if ($request->filled('start_date')) {
             $rentalsQuery->whereDate('start_date', '>=', $request->start_date);
         }
-        if ($request->has('end_date')) {
+        if ($request->filled('end_date')) {
             $rentalsQuery->whereDate('end_date', '<=', $request->end_date);
         }
 

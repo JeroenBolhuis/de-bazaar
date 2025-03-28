@@ -142,6 +142,18 @@ class AdvertisementController extends Controller
 
     public function show(Advertisement $advertisement)
     {
-        return view('advertisements.show', compact('advertisement'));
+        $blockedDates = [];
+        if ($advertisement->type === 'rental') {
+            $blockedDates = $advertisement->rentalPeriods()
+                ->get(['start_date', 'end_date'])
+                ->map(function($period) {
+                    return [
+                        'from' => $period->start_date->format('Y-m-d'),
+                        'to' => $period->end_date->format('Y-m-d'),
+                    ];
+                })->toArray();
+        }
+
+        return view('advertisements.show', compact('advertisement', 'blockedDates'));
     }
 }

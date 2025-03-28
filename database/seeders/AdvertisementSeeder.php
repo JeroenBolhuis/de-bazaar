@@ -19,10 +19,16 @@ class AdvertisementSeeder extends Seeder
             return;
         }
 
-        // Genereer bijvoorbeeld 50 advertenties
-        Advertisement::factory()->count(50)->create([
-            'user_id' => $users->random()->id, // Koppel random aan bestaande user
-        ]);
+        // Genereer bijvoorbeeld 50 advertenties voor elke gebruiker met de rol 'seller' of 'business'
+        $sellerAndBusinessUsers = $users->filter(function ($user) {
+            return $user->role === 'seller' || $user->role === 'business';
+        });
+
+        foreach ($sellerAndBusinessUsers as $user) {
+            Advertisement::factory()->count(50)->create([
+                'user_id' => $user->id, // Koppel aan de huidige gebruiker
+            ]);
+        }
     }
 }
 

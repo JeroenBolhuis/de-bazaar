@@ -1,8 +1,10 @@
 <x-app-layout>
-    <head>
+    @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    @endpush
+    @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    </head>
+    @endpush
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100 relative">
@@ -37,6 +39,9 @@
                         <!-- Price Section -->
                         <div class="text-2xl font-semibold dark:text-white">
                             €{{ number_format($advertisement->highestBidOrPrice->amount, 2) }}
+                            @if($advertisement->type === 'rental')
+                                <span class="text-base font-normal text-gray-600 dark:text-gray-400">/day</span>
+                            @endif
                         </div>
 
                         <!-- Seller Info -->
@@ -83,12 +88,25 @@
                                             @csrf
                                             <div>
                                                 <label for="date_range" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Rental Period</label>
-                                                <input type="text" id="date_range" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400" placeholder="Select dates..." readonly>
+                                                <div class="relative">
+                                                    <input
+                                                        type="text"
+                                                        id="date_range"
+                                                        class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400 pl-10"
+                                                        placeholder="Select date range..."
+                                                        readonly
+                                                    >
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                                 <input type="hidden" name="start_date" id="start_date">
                                                 <input type="hidden" name="end_date" id="end_date">
                                             </div>
                                             <div class="text-sm space-y-2">
-                                                <div id="total-cost" class="hidden">
+                                                <div id="total-cost" class="hidden bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                                     <p class="text-gray-600 dark:text-gray-400">
                                                         Rental period: <span id="rental-days">0</span> days
                                                     </p>
@@ -97,7 +115,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                            <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600">
                                                 Rent Now
                                             </button>
                                         </form>
@@ -146,13 +164,13 @@
                                 class="absolute top-6 right-6"
                             >
                                 <button
-                                    @click.prevent="
+                                    @click="
                                         loading = true;
-                                        fetch('{{ route('advertisements.favorite', $advertisement->id) }}', {
+                                        fetch('{{ route('advertisements.favorite', $advertisement) }}', {
                                             method: 'POST',
                                             headers: {
-                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
                                             },
                                         })
                                         .then(response => response.json())
@@ -160,29 +178,14 @@
                                             favorited = data.favorited;
                                             loading = false;
                                         })
-                                        .catch(() => {
-                                            loading = false;
-                                            // Keep the current state if there's an error
-                                        });
                                     "
-                                    class="focus:outline-none transition-transform transform hover:scale-110"
-                                    :class="{ 'pointer-events-none': loading }"
+                                    :class="{ 'opacity-50 cursor-not-allowed': loading }"
+                                    :disabled="loading"
+                                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                                 >
-                                    <template x-if="loading">
-                                        <svg class="w-6 h-6 animate-pulse text-red-300 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                        </svg>
-                                    </template>
-                                    <template x-if="!loading && favorited">
-                                        <svg class="w-6 h-6 text-red-500 fill-current transition-all duration-300 ease-in-out" viewBox="0 0 24 24">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                        </svg>
-                                    </template>
-                                    <template x-if="!loading && !favorited">
-                                        <svg class="w-6 h-6 text-gray-500 dark:text-gray-400 stroke-current fill-none transition-all duration-300 ease-in-out" viewBox="0 0 24 24" stroke-width="1.5">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                        </svg>
-                                    </template>
+                                    <svg class="w-6 h-6" :class="{ 'text-red-500 fill-current': favorited, 'text-gray-400 dark:text-gray-500': !favorited }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
                                 </button>
                             </div>
                         @endauth
@@ -237,120 +240,51 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const today = new Date();
+                const pricePerDay = {{ $advertisement->price }};
+                const totalCostDiv = document.getElementById('total-cost');
+                const rentalDaysSpan = document.getElementById('rental-days');
+                const totalCostSpan = document.getElementById('total-cost-amount');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
+                // Fetch blocked dates
+                fetch('{{ route('advertisements.blocked-dates', $advertisement) }}')
+                    .then(response => response.json())
+                    .then(blockedDates => {
+                        // Convert blocked dates to the format Flatpickr expects
+                        const disabledRanges = blockedDates.map(range => ({
+                            from: range.from,
+                            to: range.to
+                        }));
 
-            // Add custom styles for dark mode and range highlighting
-            const darkModeStyles = `
-                .flatpickr-calendar.dark {
-                    background: #1f2937;
-                    border-color: #374151;
-                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-                }
-                .flatpickr-calendar.dark .flatpickr-months,
-                .flatpickr-calendar.dark .flatpickr-weekdays {
-                    background: #1f2937;
-                }
-                .flatpickr-calendar.dark .flatpickr-month {
-                    color: #fff;
-                }
-                .flatpickr-calendar.dark .flatpickr-weekday {
-                    color: #9ca3af;
-                }
-                .flatpickr-calendar.dark .flatpickr-day {
-                    color: #fff;
-                }
-                .flatpickr-calendar.dark .flatpickr-day.disabled {
-                    color: #6b7280;
-                }
-                .flatpickr-calendar.dark .flatpickr-day.selected,
-                .flatpickr-calendar.dark .flatpickr-day.startRange,
-                .flatpickr-calendar.dark .flatpickr-day.endRange {
-                    background: #4f46e5;
-                    border-color: #4f46e5;
-                    color: #fff;
-                }
-                .flatpickr-calendar.dark .flatpickr-day.inRange {
-                    background: #312e81;
-                    border-color: #312e81;
-                    color: #fff;
-                }
-                .flatpickr-calendar.dark .flatpickr-day:hover {
-                    background: #374151;
-                }
-                .flatpickr-calendar.dark .flatpickr-current-month .flatpickr-monthDropdown-months,
-                .flatpickr-calendar.dark .flatpickr-current-month input.cur-year {
-                    color: #fff;
-                    background: #1f2937;
-                }
-                .flatpickr-calendar.dark .flatpickr-months .flatpickr-prev-month,
-                .flatpickr-calendar.dark .flatpickr-months .flatpickr-next-month {
-                    color: #fff;
-                    fill: #fff;
-                }
-            `;
-
-            // Add styles to document
-            const styleSheet = document.createElement("style");
-            styleSheet.innerText = darkModeStyles;
-            document.head.appendChild(styleSheet);
-
-            const pricePerDay = {{ $advertisement->wear_per_day }};
-            const totalCostDiv = document.getElementById('total-cost');
-            const rentalDaysSpan = document.getElementById('rental-days');
-            const totalCostSpan = document.getElementById('total-cost-amount');
-
-            // Function to calculate days between two dates
-            function calculateDays(start, end) {
-                const diffTime = Math.abs(end - start);
-                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            }
-
-            // Function to format number as currency
-            function formatCurrency(number) {
-                return number.toFixed(2);
-            }
-
-            // Fetch blocked dates
-            fetch('{{ route('advertisements.blocked-dates', $advertisement) }}')
-                .then(response => response.json())
-                .then(blockedDates => {
-                    // Initialize date range picker
-                    const dateRangePicker = flatpickr("#date_range", {
-                        mode: "range",
-                        minDate: "today",
-                        disable: blockedDates,
-                        dateFormat: "Y-m-d",
-                        showMonths: 2,
-                        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-                        onChange: function(selectedDates) {
-                            if (selectedDates.length === 2) {
-                                const days = calculateDays(selectedDates[0], selectedDates[1]);
-                                const totalCost = days * pricePerDay;
-                                
-                                document.getElementById('start_date').value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
-                                document.getElementById('end_date').value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
-                                
-                                rentalDaysSpan.textContent = days;
-                                totalCostSpan.textContent = formatCurrency(totalCost);
-                                totalCostDiv.classList.remove('hidden');
-                            } else {
-                                totalCostDiv.classList.add('hidden');
+                        // Initialize date range picker
+                        const dateRangePicker = flatpickr("#date_range", {
+                            mode: "range",
+                            minDate: "today",
+                            disable: disabledRanges,
+                            dateFormat: "d/m/Y",
+                            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+                            onChange: function(selectedDates) {
+                                if (selectedDates.length === 2) {
+                                    const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
+                                    const days =  Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Add 1 to include both start and end dates
+                                    const totalCost = days * pricePerDay;
+                                    
+                                    document.getElementById('start_date').value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                                    document.getElementById('end_date').value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                                    
+                                    rentalDaysSpan.textContent = days;
+                                    totalCostSpan.textContent = totalCost.toFixed(2);
+                                    totalCostDiv.classList.remove('hidden');
+                                } else {
+                                    totalCostDiv.classList.add('hidden');
+                                }
                             }
-                        }
-                    });
-
-                    // Update theme when system preference changes
-                    if (window.matchMedia) {
-                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                            dateRangePicker.set('theme', e.matches ? 'dark' : 'light');
                         });
-                    }
-                });
-        });
-    </script>
+                    });
+            });
+        </script>
+    @endpush
 </x-app-layout>
