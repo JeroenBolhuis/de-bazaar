@@ -8,7 +8,7 @@
             :previousYear="$previousYear" 
             :nextMonth="$nextMonth" 
             :nextYear="$nextYear" 
-            type="rented"
+            type="auction"
         />
     </div>
 </x-app-layout> 

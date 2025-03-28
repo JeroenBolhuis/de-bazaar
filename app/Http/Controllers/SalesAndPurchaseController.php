@@ -252,7 +252,62 @@ class SalesAndPurchaseController extends Controller
 
         return view('salesAndPurchases.sales-calendar', compact('calendar', 'month', 'year', 'previousMonth', 'previousYear', 'nextMonth', 'nextYear'));
     }
-    
+
+    public function auctionCalendar(Request $request)
+    {
+        // Get current month and year from request or use current date
+        $month = $request->get('month', now()->month);
+        $year = $request->get('year', now()->year);
+
+        // Create Carbon instance for the first day of the month
+        $firstDayOfMonth = \Carbon\Carbon::createFromDate($year, $month, 1);
+
+        // Calculate previous and next month/year
+        $previousMonth = $firstDayOfMonth->copy()->subMonth()->month;
+        $previousYear = $firstDayOfMonth->copy()->subMonth()->year;
+        $nextMonth = $firstDayOfMonth->copy()->addMonth()->month;
+        $nextYear = $firstDayOfMonth->copy()->addMonth()->year;
+
+        // Get start and end dates for the calendar view (including padding days)
+        $start = $firstDayOfMonth->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::MONDAY);
+        $end = $firstDayOfMonth->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SUNDAY);
+
+        // Get all auctions within the date range
+        $auctions = Advertisement::where('type', 'auction')
+            ->where('user_id', auth()->id())
+            ->where(function($query) use ($start, $end) {
+                $query->whereBetween('auction_start_date', [$start, $end])
+                    ->orWhereBetween('auction_end_date', [$start, $end])
+                    ->orWhere(function($q) use ($start, $end) {
+                        $q->where('auction_start_date', '<=', $start)
+                          ->where('auction_end_date', '>=', $end);
+                    });
+            })
+            ->get();
+
+        // Create calendar array
+        $calendar = [];
+        $currentDate = $start->copy();
+
+        while ($currentDate <= $end) {
+            $dateString = $currentDate->format('Y-m-d');
+            
+            // Get auctions for this day
+            $dayAuctions = $auctions->filter(function($auction) use ($currentDate) {
+                // Use betweenIncluded to include the exact start and end dates even with time components
+                return $currentDate->betweenIncluded(
+                    $auction->auction_start_date->startOfDay(),
+                    $auction->auction_end_date->endOfDay()
+                );
+            });
+
+            $calendar[$dateString] = $dayAuctions;
+            
+            $currentDate->addDay();
+        }
+
+        return view('salesAndPurchases.auction-calendar', compact('calendar', 'month', 'year', 'previousMonth', 'previousYear', 'nextMonth', 'nextYear'));
+    }
     
     public function buy_advertisement(Advertisement $advertisement)
     {
