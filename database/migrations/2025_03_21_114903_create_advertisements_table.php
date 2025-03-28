@@ -51,6 +51,14 @@ return new class extends Migration
             $table->string('return_image')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('purchases', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('advertisement_id')->constrained()->onDelete('cascade');
+            $table->timestamp('purchase_date')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -60,6 +68,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('auction_biddings');
         Schema::dropIfExists('rental_periods');
+        Schema::dropIfExists('purchases');
         Schema::dropIfExists('advertisements');
     }
 };
