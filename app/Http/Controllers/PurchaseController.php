@@ -3,44 +3,63 @@
 namespace App\Http\Controllers;
 
 use App\Models\Advertisement;
-use App\Models\Purchase;
+use App\Models\ListingPurchase;
 use App\Models\RentalPeriod;
-use App\Models\Bid;
+use App\Models\AuctionBidding;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Purchase::with('advertisement')
+        // listings
+        $listingsQuery = ListingPurchase::with('advertisement')
             ->where('user_id', auth()->id());
 
-        // Filters (bijvoorbeeld op datum)
+        // Filters
         if ($request->has('start_date')) {
-            $query->whereDate('purchase_date', '>=', $request->start_date);
+            $listingsQuery->whereDate('purchase_date', '>=', $request->start_date);
         }
         if ($request->has('end_date')) {
-            $query->whereDate('purchase_date', '<=', $request->end_date);
+            $listingsQuery->whereDate('purchase_date', '<=', $request->end_date);
         }
 
         // Sorteren
         if ($request->sort === 'date_asc') {
-            $query->orderBy('purchase_date', 'asc');
+            $listingsQuery->orderBy('purchase_date', 'asc');
         } else {
-            $query->orderBy('purchase_date', 'desc');
+            $listingsQuery->orderBy('purchase_date', 'desc');
         }
 
-        $purchases = $query->paginate(10);
+        $listings = $listingsQuery->paginate(10);
 
-        return view('purchases.index', compact('purchases'));
+        // Rentals
+        $rentalsQuery = RentalPeriod::with('advertisement')
+            ->where('user_id', auth()->id());
+
+        // Filters
+        if ($request->has('start_date')) {
+            $rentalsQuery->whereDate('start_date', '>=', $request->start_date);
+        }
+        if ($request->has('end_date')) {
+            $rentalsQuery->whereDate('end_date', '<=', $request->end_date);
+        }
+
+        // Sorteren
+        if ($request->sort === 'date_asc') {
+            $rentalsQuery->orderBy('start_date', 'asc');
+        } else {
+            $rentalsQuery->orderBy('start_date', 'desc');
+        }
+
+        $rentals = $rentalsQuery->paginate(10);
+
+        return view('purchases.index', compact('listings', 'rentals'));
     }
 
     public function buy_advertisement(Advertisement $advertisement)
     {
         $user = auth()->user();
-        if ($user->purchases()->where('advertisement_id', $advertisement->id)->exists()) {
-            return back()->with('error', 'You already purchased this product!');
-        }
 
         $user->purchases()->create([
             'advertisement_id' => $advertisement->id,
