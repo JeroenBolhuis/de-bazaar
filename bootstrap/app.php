@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\SetLocale;
+use Illuminate\Auth\Access\AuthorizationException;
+use App\Providers\AuthServiceProvider;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocale::class,
         ]);
     })
+    ->withProviders([
+        AuthServiceProvider::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Handle authorization exceptions
+        $exceptions->render(function (AuthorizationException $e) {
+            return abort(403, $e->getMessage() ?: 'This action is unauthorized.');
+        });
     })->create();
