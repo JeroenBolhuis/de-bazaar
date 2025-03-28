@@ -127,10 +127,17 @@ class AdvertisementController extends Controller
         // Add type-specific validation rules
         switch ($request->type) {
             case 'auction':
-                $baseValidation = array_merge($baseValidation, [
-                    'auction_start_date' => 'required|date|after:now',
-                    'auction_end_date' => 'required|date|after:auction_start_date',
-                ]);
+                // Check if "start now" is checked
+                if ($request->has('start_now')) {
+                    $baseValidation = array_merge($baseValidation, [
+                        'auction_end_date' => 'required|date|after:now',
+                    ]);
+                } else {
+                    $baseValidation = array_merge($baseValidation, [
+                        'auction_start_date' => 'required|date|after:now',
+                        'auction_end_date' => 'required|date|after:auction_start_date',
+                    ]);
+                }
                 break;
             case 'rental':
                 $baseValidation = array_merge($baseValidation, [
@@ -150,6 +157,11 @@ class AdvertisementController extends Controller
 
         // Add user_id to the validated data
         $validated['user_id'] = $userId;
+        
+        // Set auction start date to now if "start now" is checked
+        if ($request->type === 'auction' && $request->has('start_now')) {
+            $validated['auction_start_date'] = now()->format('Y-m-d H:i:s');
+        }
 
         // Create the advertisement
         $advertisement = Advertisement::create($validated);
