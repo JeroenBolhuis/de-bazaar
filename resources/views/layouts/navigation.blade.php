@@ -22,6 +22,11 @@
                         <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
                             {{ __('My Purchases') }}
                         </x-nav-link>
+                        @if(Auth::user()->can_sell)
+                            <x-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')">
+                                {{ __('My Sales') }}
+                            </x-nav-link>
+                        @endif
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
@@ -123,6 +128,11 @@
                 <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
                     {{ __('My Purchases') }}
                 </x-nav-link>
+                @if(Auth::user()->can_sell)
+                    <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')">
+                        {{ __('My Sales') }}
+                    </x-responsive-nav-link>
+                @endif
             @endauth
 
         </div>
