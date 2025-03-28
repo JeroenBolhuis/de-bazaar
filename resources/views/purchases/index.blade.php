@@ -106,21 +106,21 @@
             <div id="purchases-tab" class="tab-content bg-white dark:bg-gray-800 rounded-lg shadow">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Purchased Items</h3>
-                    @forelse($listings as $listing)
+                    @forelse($purchases as $purchase)
                         <div class="border-b border-gray-200 dark:border-gray-700 py-4 flex flex-col sm:flex-row justify-between gap-4">
                             <div class="flex-grow">
-                                <h4 class="font-medium text-gray-900 dark:text-gray-100">{{ $listing->advertisement->title }}</h4>
+                                <h4 class="font-medium text-gray-900 dark:text-gray-100">{{ $purchase->advertisement->title }}</h4>
                                 <div class="mt-2 flex flex-col sm:flex-row sm:items-center gap-4">
                                     <span class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        Purchased: {{ $listing->purchase_date->format('M d, Y') }}
+                                        Purchased: {{ $purchase->purchase_date->format('M d, Y') }}
                                     </span>
                                 </div>
                             </div>
                             <div class="flex items-center">
-                                <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400">€{{ number_format($listing->advertisement->price, 2) }}</span>
+                                <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400">€{{ number_format($purchase->advertisement->price, 2) }}</span>
                             </div>
                         </div>
                     @empty
@@ -135,7 +135,7 @@
 
                     <!-- Pagination -->
                     <div class="mt-6">
-                        {{ $listings->withQueryString()->links() }}
+                        {{ $purchases->withQueryString()->links() }}
                     </div>
                 </div>
             </div>

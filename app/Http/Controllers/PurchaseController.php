@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Advertisement;
-use App\Models\ListingPurchase;
+use App\Models\Purchase;
 use App\Models\RentalPeriod;
 use App\Models\AuctionBidding;
 use Illuminate\Http\Request;
@@ -12,32 +12,32 @@ class PurchaseController extends Controller
 {
     public function index(Request $request)
     {
-        // listings
-        $listingsQuery = ListingPurchase::with('advertisement')
-            ->where('listing_purchases.user_id', auth()->id());
+        // Purchases
+        $purchasesQuery = Purchase::with('advertisement')
+            ->where('purchases.user_id', auth()->id());
 
         // Filters
         if ($request->filled('start_date')) {
-            $listingsQuery->whereDate('listing_purchases.purchase_date', '>=', $request->start_date);
+            $purchasesQuery->whereDate('purchases.purchase_date', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
-            $listingsQuery->whereDate('listing_purchases.purchase_date', '<=', $request->end_date);
+            $purchasesQuery->whereDate('purchases.purchase_date', '<=', $request->end_date);
         }
 
         // Sorteren
         if ($request->sort === 'price_asc') {
-            $listingsQuery->join('advertisements', 'listing_purchases.advertisement_id', '=', 'advertisements.id')
+            $purchasesQuery->join('advertisements', 'purchases.advertisement_id', '=', 'advertisements.id')
                          ->orderBy('advertisements.price', 'asc')
-                         ->select('listing_purchases.*');
+                         ->select('purchases.*');
         } else if ($request->sort === 'price_desc') {
-            $listingsQuery->join('advertisements', 'listing_purchases.advertisement_id', '=', 'advertisements.id')
+            $purchasesQuery->join('advertisements', 'purchases.advertisement_id', '=', 'advertisements.id')
                          ->orderBy('advertisements.price', 'desc')
-                         ->select('listing_purchases.*');
+                         ->select('purchases.*');
         } else {
-            $listingsQuery->orderBy('listing_purchases.purchase_date', 'desc');
+            $purchasesQuery->orderBy('purchases.purchase_date', 'desc');
         }
 
-        $listings = $listingsQuery->paginate(10);
+        $purchases = $purchasesQuery->paginate(10);
 
         // Rentals
         $rentalsQuery = RentalPeriod::with('advertisement')
@@ -83,7 +83,7 @@ class PurchaseController extends Controller
 
         $rentals = $rentalsQuery->paginate(10);
 
-        return view('purchases.index', compact('listings', 'rentals'));
+        return view('purchases.index', compact('purchases', 'rentals'));
     }
 
     public function calendar(Request $request)
