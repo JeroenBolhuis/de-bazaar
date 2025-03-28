@@ -7,11 +7,13 @@
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('All Advertisements') }}</h2>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Browse all available items, including listings, rentals, and auctions') }}</p>
                 </div>
-                <div>
-                    <a href="{{ route('advertisements.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        {{ __('Create Advertisement') }}
-                    </a>
-                </div>
+                @if(auth()->user()?->canSell)
+                    <div>
+                        <a href="{{ route('advertisements.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            {{ __('Create Advertisement') }}
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div class="flex flex-col md:flex-row gap-6">

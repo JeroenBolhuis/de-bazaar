@@ -52,8 +52,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Advertisements management
-    Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
-    Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
+    Route::middleware(['can:sell-advertisements'])->group(function () {
+        Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
+        Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
+    });
+
     Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
     Route::get('/advertisements/{advertisement}/review', [ReviewController::class, 'createAdvertisementReview'])->name('advertisements.review');
     Route::post('/advertisements/{advertisement}/review', [ReviewController::class, 'storeAdvertisementReview'])->name('advertisements.review.store');
