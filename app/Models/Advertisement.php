@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Advertisement extends Model
 {
@@ -21,8 +22,23 @@ class Advertisement extends Model
         'wear_per_day',
         'image',
         'is_active',
-
     ];
+
+    protected $casts = [
+        'auction_start_date' => 'datetime',
+        'auction_end_date' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
+    public function isAuctionActive()
+    {
+        if ($this->type !== 'auction') {
+            return false;
+        }
+
+        $now = now();
+        return $now->between($this->auction_start_date, $this->auction_end_date);
+    }
 
     public function user()
     {
@@ -33,7 +49,6 @@ class Advertisement extends Model
     {
         return $this->hasMany(AdvertisementReview::class);
     }
-
 
     public function relatedAdvertisements()
     {
@@ -50,14 +65,11 @@ class Advertisement extends Model
         return $this->hasMany(RentalPeriod::class);
     }
 
-
     public function purchases()
     {
         return $this->hasMany(Purchase::class);
     }
 
-
-    // Relation: Advertisement favorited by users
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();

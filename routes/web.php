@@ -57,7 +57,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
     });
 
-    Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'store'])->name('advertisements.purchase');
+    Route::post('/advertisements/{advertisement}/purchase', [PurchaseController::class, 'buy_advertisement'])->name('advertisements.purchase');
+    Route::post('/advertisements/{advertisement}/rent', [PurchaseController::class, 'rent_advertisement'])->name('advertisements.rent');
+    Route::get('/advertisements/{advertisement}/blocked-dates', [PurchaseController::class, 'getBlockedDates'])->name('advertisements.blocked-dates');
+    Route::post('/advertisements/{advertisement}/bid', [PurchaseController::class, 'bid_advertisement'])->name('advertisements.bid');
     Route::get('/advertisements/{advertisement}/review', [ReviewController::class, 'createAdvertisementReview'])->name('advertisements.review');
     Route::post('/advertisements/{advertisement}/review', [ReviewController::class, 'storeAdvertisementReview'])->name('advertisements.review.store');
     

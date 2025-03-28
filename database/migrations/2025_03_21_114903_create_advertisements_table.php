@@ -42,7 +42,7 @@ return new class extends Migration
             $table->unique(['advertisement_id', 'amount']); // Prevent duplicate bids for the same advertisement
         });
 
-        Schema::create('user_rents_advertisements', function (Blueprint $table) {
+        Schema::create('rental_periods', function (Blueprint $table) {
             $table->id();
             $table->foreignId('advertisement_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -59,7 +59,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('auction_biddings');
-        Schema::dropIfExists('user_rents_advertisements');
+        Schema::dropIfExists('rental_periods');
         Schema::dropIfExists('advertisements');
     }
 };
