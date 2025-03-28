@@ -395,7 +395,14 @@ class SalesAndPurchaseController extends Controller
         }
 
         // Directly check the count in the database
-        $bidCount = AuctionBidding::where('user_id', $user_id)->count();
+        $bidCount = AuctionBidding::whereHas('advertisement', function($query) {
+            $query->where('type', 'auction')
+                  ->where(function($q) {
+                      // Count bids for active or future auctions only
+                      $q->where('auction_end_date', '>=', now())
+                        ->orWhere('auction_start_date', '>', now());
+                  });
+        })->where('user_id', $user_id)->count();
         
         // Check if limit reached
         if ($bidCount >= 4) {
@@ -411,19 +418,25 @@ class SalesAndPurchaseController extends Controller
             }
         }
 
-        $verified = $request->validate([
+        // Get the minimum bid amount (current highest bid or starting price)
+        $minBidAmount = $advertisement->auctionBiddings()->max('amount') ?? $advertisement->price;
+
+        // Validate bid amount
+        $request->validate([
             'amount' => [
                 'required',
                 'numeric',
-                'min:' . ($advertisement->auctionBiddings()->max('amount') ?? $advertisement->price),
+                'min:' . $minBidAmount,
             ],
+        ], [
+            'amount.min' => 'Your bid must be at least €' . number_format($minBidAmount, 2)
         ]);
 
         // Create the bid
         $bid = new AuctionBidding();
         $bid->advertisement_id = $advertisement->id;
         $bid->user_id = $user_id;
-        $bid->amount = $verified['amount'];
+        $bid->amount = $request->amount;
         $bid->save();
 
         return back()->with('success', 'Bid placed successfully!');

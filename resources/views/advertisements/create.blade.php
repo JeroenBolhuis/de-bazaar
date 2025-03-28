@@ -3,6 +3,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">{{ __('Create Advertisement') }}</h2>
 
+
             @if ($errors->has('limit'))
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <span class="block sm:inline">{{ $errors->first('limit') }}</span>
@@ -20,6 +21,44 @@
                             <option value="auction" {{ old('type') == 'auction' ? 'selected' : '' }}>Auction</option>
                         </select>
                         <x-input-error :messages="$errors->get('type')" class="mt-2" />
+                        
+                        @auth
+                            <div id="remaining-counter" class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                @php
+                                    $listingCount = App\Models\Advertisement::where('user_id', auth()->id())
+                                                    ->where('type', 'listing')
+                                                    ->count();
+                                    $rentalCount = App\Models\Advertisement::where('user_id', auth()->id())
+                                                    ->where('type', 'rental')
+                                                    ->count();
+                                    $auctionCount = App\Models\Advertisement::where('user_id', auth()->id())
+                                                    ->where('type', 'auction')
+                                                    ->count();
+                                    
+                                    $remainingListing = 4 - $listingCount;
+                                    $remainingRental = 4 - $rentalCount;
+                                    $remainingAuction = 4 - $auctionCount;
+                                @endphp
+                                <span id="listing-count" class="{{ old('type') == 'listing' || old('type') == null ? '' : 'hidden' }}">
+                                    You have {{ $remainingListing }} listing{{ $remainingListing !== 1 ? 's' : '' }} remaining (maximum 4)
+                                    @if($remainingListing <= 0)
+                                        <span class="text-red-500 font-bold">- Limit reached!</span>
+                                    @endif
+                                </span>
+                                <span id="rental-count" class="{{ old('type') == 'rental' ? '' : 'hidden' }}">
+                                    You have {{ $remainingRental }} rental{{ $remainingRental !== 1 ? 's' : '' }} remaining (maximum 4)
+                                    @if($remainingRental <= 0)
+                                        <span class="text-red-500 font-bold">- Limit reached!</span>
+                                    @endif
+                                </span>
+                                <span id="auction-count" class="{{ old('type') == 'auction' ? '' : 'hidden' }}">
+                                    You have {{ $remainingAuction }} auction{{ $remainingAuction !== 1 ? 's' : '' }} remaining (maximum 4)
+                                    @if($remainingAuction <= 0)
+                                        <span class="text-red-500 font-bold">- Limit reached!</span>
+                                    @endif
+                                </span>
+                            </div>
+                        @endauth
                     </div>
 
                     <div>
@@ -95,6 +134,11 @@
             const auctionFields = document.getElementById('auction-fields');
             const rentalFields = document.getElementById('rental-fields');
             const priceLabel = document.getElementById('price-label');
+            
+            // Counter elements
+            const listingCount = document.getElementById('listing-count');
+            const rentalCount = document.getElementById('rental-count');
+            const auctionCount = document.getElementById('auction-count');
 
             function toggleFields() {
                 const selectedType = typeSelect.value;
@@ -104,14 +148,29 @@
                     auctionFields.style.display = 'grid';
                     rentalFields.style.display = 'none';
                     priceLabel.textContent = 'Starting Price';
+                    
+                    // Update counter visibility
+                    if (listingCount) listingCount.classList.add('hidden');
+                    if (rentalCount) rentalCount.classList.add('hidden');
+                    if (auctionCount) auctionCount.classList.remove('hidden');
                 } else if (selectedType === 'rental') {
                     auctionFields.style.display = 'none';
                     rentalFields.style.display = 'grid';
                     priceLabel.textContent = 'Price per day';
+                    
+                    // Update counter visibility
+                    if (listingCount) listingCount.classList.add('hidden');
+                    if (rentalCount) rentalCount.classList.remove('hidden');
+                    if (auctionCount) auctionCount.classList.add('hidden');
                 } else {
                     auctionFields.style.display = 'none';
                     rentalFields.style.display = 'none';
                     priceLabel.textContent = 'Price';
+                    
+                    // Update counter visibility
+                    if (listingCount) listingCount.classList.remove('hidden');
+                    if (rentalCount) rentalCount.classList.add('hidden');
+                    if (auctionCount) auctionCount.classList.add('hidden');
                 }
             }
 

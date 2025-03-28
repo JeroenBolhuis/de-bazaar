@@ -7,6 +7,29 @@
     @endpush
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Error Messages Section -->
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <ul class="list-disc pl-5">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100 relative">
                 <!-- Back Button -->
                 <div class="mb-6">
@@ -167,6 +190,27 @@
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Bid Amount</label>
                                                 <input type="number" name="amount" step="0.01" min="{{ $advertisement->bids->max('amount') ?? $advertisement->price }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400">
                                             </div>
+                                            
+                                            @auth
+                                                @php
+                                                    $userBidCount = App\Models\AuctionBidding::whereHas('advertisement', function($query) {
+                                                        $query->where('type', 'auction')
+                                                              ->where(function($q) {
+                                                                  // Count bids for active or future auctions only
+                                                                  $q->where('auction_end_date', '>=', now())
+                                                                    ->orWhere('auction_start_date', '>', now());
+                                                              });
+                                                    })->where('user_id', auth()->id())->count();
+                                                    $remainingBids = 4 - $userBidCount;
+                                                @endphp
+                                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                                    You have {{ $remainingBids }} bid{{ $remainingBids !== 1 ? 's' : '' }} remaining (maximum 4)
+                                                    @if($remainingBids <= 0)
+                                                        <span class="text-red-500 font-bold">- Limit reached!</span>
+                                                    @endif
+                                                </div>
+                                            @endauth
+                                            
                                             <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
                                                 Place Bid
                                             </button>
