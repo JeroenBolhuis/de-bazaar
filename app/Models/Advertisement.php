@@ -52,7 +52,8 @@ class Advertisement extends Model
 
     public function relatedAdvertisements()
     {
-        return $this->belongsToMany(Advertisement::class, 'advertisement_related', 'advertisement_id', 'related_advertisement_id');
+        return $this->belongsToMany(Advertisement::class, 'related_advertisements', 'advertisement_id', 'related_advertisement_id')
+                    ->withTimestamps();
     }
 
     public function auctionBiddings()
