@@ -81,7 +81,7 @@
                                     <p class="dark:text-gray-300">Condition: {{ $advertisement->condition }}%</p>
                                     <p class="dark:text-gray-300">Wear per day: {{ $advertisement->wear_per_day }}%</p>
                                 </div>
-                                @if(!(auth()->check() && auth()->id() === $advertisement->user_id))
+                                @if((auth()->check() && auth()->id() !== $advertisement->user_id))
                                     <div class="mt-4">
                                         <h3 class="text-lg font-semibold mb-2">Rent this item</h3>
                                         <form action="{{ route('advertisements.rent', $advertisement) }}" method="POST" class="space-y-4">
@@ -119,6 +119,19 @@
                                                 Rent Now
                                             </button>
                                         </form>
+                                    </div>
+                                @elseif(!auth()->check())
+                                    <div class="mt-4 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+                                        <h3 class="text-lg font-semibold mb-2 dark:text-white">Want to rent this item?</h3>
+                                        <p class="text-gray-600 dark:text-gray-400 mb-4">Please log in or create an account to rent this item.</p>
+                                        <div class="space-x-4">
+                                            <a href="{{ route('login') }}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                                Log In
+                                            </a>
+                                            <a href="{{ route('register') }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500">
+                                                Register
+                                            </a>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -243,47 +256,52 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const today = new Date();
-                const pricePerDay = {{ $advertisement->price }};
-                const totalCostDiv = document.getElementById('total-cost');
-                const rentalDaysSpan = document.getElementById('rental-days');
-                const totalCostSpan = document.getElementById('total-cost-amount');
+                @auth
+                const dateRangeInput = document.getElementById('date_range');
+                if (dateRangeInput) {
+                    const today = new Date();
+                    const pricePerDay = {{ $advertisement->price }};
+                    const totalCostDiv = document.getElementById('total-cost');
+                    const rentalDaysSpan = document.getElementById('rental-days');
+                    const totalCostSpan = document.getElementById('total-cost-amount');
 
-                // Fetch blocked dates
-                fetch('{{ route('advertisements.blocked-dates', $advertisement) }}')
-                    .then(response => response.json())
-                    .then(blockedDates => {
-                        // Convert blocked dates to the format Flatpickr expects
-                        const disabledRanges = blockedDates.map(range => ({
-                            from: range.from,
-                            to: range.to
-                        }));
+                    // Fetch blocked dates
+                    fetch('{{ route('advertisements.blocked-dates', $advertisement) }}')
+                        .then(response => response.json())
+                        .then(blockedDates => {
+                            // Convert blocked dates to the format Flatpickr expects
+                            const disabledRanges = blockedDates.map(range => ({
+                                from: range.from,
+                                to: range.to
+                            }));
 
-                        // Initialize date range picker
-                        const dateRangePicker = flatpickr("#date_range", {
-                            mode: "range",
-                            minDate: "today",
-                            disable: disabledRanges,
-                            dateFormat: "d/m/Y",
-                            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-                            onChange: function(selectedDates) {
-                                if (selectedDates.length === 2) {
-                                    const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
-                                    const days =  Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Add 1 to include both start and end dates
-                                    const totalCost = days * pricePerDay;
-                                    
-                                    document.getElementById('start_date').value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
-                                    document.getElementById('end_date').value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
-                                    
-                                    rentalDaysSpan.textContent = days;
-                                    totalCostSpan.textContent = totalCost.toFixed(2);
-                                    totalCostDiv.classList.remove('hidden');
-                                } else {
-                                    totalCostDiv.classList.add('hidden');
+                            // Initialize date range picker
+                            const dateRangePicker = flatpickr("#date_range", {
+                                mode: "range",
+                                minDate: "today",
+                                disable: disabledRanges,
+                                dateFormat: "d/m/Y",
+                                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+                                onChange: function(selectedDates) {
+                                    if (selectedDates.length === 2) {
+                                        const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
+                                        const days =  Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Add 1 to include both start and end dates
+                                        const totalCost = days * pricePerDay;
+                                        
+                                        document.getElementById('start_date').value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                                        document.getElementById('end_date').value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                                        
+                                        rentalDaysSpan.textContent = days;
+                                        totalCostSpan.textContent = totalCost.toFixed(2);
+                                        totalCostDiv.classList.remove('hidden');
+                                    } else {
+                                        totalCostDiv.classList.add('hidden');
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
+                }
+                @endauth
             });
         </script>
     @endpush

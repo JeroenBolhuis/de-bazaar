@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-12">
-        <x-rental-calendar 
+        <x-base-calendar 
             :calendar="$calendar" 
             :month="$month" 
             :year="$year" 

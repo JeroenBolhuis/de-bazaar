@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-
+use App\Models\Advertisement;
+use App\Models\RentalPeriod;
 class DashboardController extends Controller
 {
     /**
@@ -13,22 +14,37 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        
+        $advertisements = Advertisement::where('user_id', $user->id)->get();
+        $rentedItems = RentalPeriod::where('user_id', $user->id)->get();
+        $rentedOutItems = RentalPeriod::with('advertisement')->whereHas('advertisement', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->get();
+
         // Get counts for different types of listings
         $stats = [
-            'active_listings' => 0, // TODO: Implement actual count
-            'active_rentals' => 0,  // TODO: Implement actual count
-            'active_auctions' => 0, // TODO: Implement actual count
+            'active_listings' => $advertisements->where('type', 'listing')->count(), // TODO: Implement actual count
+            'active_rentals' => $advertisements->where('type', 'rental')->count(),  // TODO: Implement actual count
+            'active_auctions' => $advertisements->where('type', 'auction')->count(), // TODO: Implement actual count
         ];
 
-        // Get recent activity
-        $recentActivity = []; // TODO: Implement recent activity
-
-        // Get upcoming events
+        // Get upcoming events within 7 days or less and not in the past
         $upcomingEvents = [
-            'rental_returns' => [], // TODO: Implement rental returns
-            'ending_auctions' => [], // TODO: Implement ending auctions
-            'expiring_listings' => [], // TODO: Implement expiring listings
+            'rental_pickups' => $rentedItems->where('start_date', '>=', now()->startOfDay())
+                ->where('start_date', '<', now()->addDays(7)->endOfDay())
+                ->all(),
+            'rental_returns' => $rentedItems->where('end_date', '>=', now()->startOfDay())
+                ->where('end_date', '<', now()->addDays(7)->endOfDay())
+                ->all(),
+            'rental_gives' => $rentedOutItems->where('start_date', '>=', now()->startOfDay())
+                ->where('start_date', '<', now()->addDays(7)->endOfDay())
+                ->all(),
+            'rental_receives' => $rentedOutItems->where('end_date', '>=', now()->startOfDay())
+                ->where('end_date', '<', now()->addDays(7)->endOfDay())
+                ->all(),
+            'ending_auctions' => $advertisements->where('type', 'auction')
+                ->where('auction_end_date', '>=', now()->startOfDay())
+                ->where('auction_end_date', '<', now()->addDays(7)->endOfDay())
+                ->all(),
         ];
 
         // Get business stats if user is a business user
@@ -42,6 +58,6 @@ class DashboardController extends Controller
             ];
         }
 
-        return view('dashboard', compact('stats', 'recentActivity', 'upcomingEvents', 'businessStats'));
+        return view('dashboard', compact('stats', 'upcomingEvents', 'businessStats'));
     }
 }
