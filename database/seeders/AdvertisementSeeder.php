@@ -25,8 +25,17 @@ class AdvertisementSeeder extends Seeder
         });
 
         foreach ($sellerAndBusinessUsers as $user) {
-            Advertisement::factory()->count(50)->create([
+            Advertisement::factory()->count(random_int(0, 4))->create([
                 'user_id' => $user->id, // Koppel aan de huidige gebruiker
+                'type' => 'listing',
+            ]);
+            Advertisement::factory()->count(random_int(0, 4))->create([
+                'user_id' => $user->id, // Koppel aan de huidige gebruiker
+                'type' => 'auction',
+            ]);
+            Advertisement::factory()->count(random_int(0, 4))->create([
+                'user_id' => $user->id, // Koppel aan de huidige gebruiker
+                'type' => 'rental',
             ]);
         }
     }

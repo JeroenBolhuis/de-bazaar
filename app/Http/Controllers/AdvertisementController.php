@@ -100,6 +100,22 @@ class AdvertisementController extends Controller
 
     public function store(Request $request)
     {
+        // Directly check the count in the database
+        $userId = auth()->id();
+        $type = $request->type;
+        
+        // Count existing advertisements of this type for the user
+        $count = Advertisement::where('user_id', $userId)
+                    ->where('type', $type)
+                    ->count();
+        
+        // Check if limit reached
+        if ($count >= 4) {
+            return back()
+                ->withInput()
+                ->withErrors(['limit' => "You have reached the maximum limit of {$type} advertisements (4)."]);
+        }
+        
         $baseValidation = [
             'type' => 'required|in:listing,rental,auction',
             'title' => 'required|string|max:255',
@@ -133,8 +149,9 @@ class AdvertisementController extends Controller
         }
 
         // Add user_id to the validated data
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = $userId;
 
+        // Create the advertisement
         $advertisement = Advertisement::create($validated);
 
         return redirect()->route('advertisements.show', $advertisement);

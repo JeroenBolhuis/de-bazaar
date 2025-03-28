@@ -3,6 +3,12 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">{{ __('Create Advertisement') }}</h2>
 
+            @if ($errors->has('limit'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ $errors->first('limit') }}</span>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('advertisements.store') }}" class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow p-6" enctype="multipart/form-data">
                 @csrf
                 <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-6">

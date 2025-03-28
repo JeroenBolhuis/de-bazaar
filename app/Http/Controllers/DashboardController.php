@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Advertisement;
 use App\Models\RentalPeriod;
+use App\Models\AuctionBidding;
+
 class DashboardController extends Controller
 {
     /**
@@ -20,11 +22,18 @@ class DashboardController extends Controller
             $query->where('user_id', $user->id);
         })->get();
 
+        $biddings = AuctionBidding::where('user_id', $user->id)
+            ->whereHas('advertisement', function($query) {
+                $query->where('auction_end_date', '>', now());
+            })
+            ->with('advertisement')->get();
+
         // Get counts for different types of listings
         $stats = [
-            'active_listings' => $advertisements->where('type', 'listing')->count(), // TODO: Implement actual count
-            'active_rentals' => $advertisements->where('type', 'rental')->count(),  // TODO: Implement actual count
-            'active_auctions' => $advertisements->where('type', 'auction')->count(), // TODO: Implement actual count
+            'active_listings' => $advertisements->where('type', 'listing')->count(),
+            'active_rentals' => $advertisements->where('type', 'rental')->count(),
+            'active_auctions' => $advertisements->where('type', 'auction')->count(),
+            'active_biddings' => $biddings->count(),
         ];
 
         // Get upcoming events within 7 days or less and not in the past
