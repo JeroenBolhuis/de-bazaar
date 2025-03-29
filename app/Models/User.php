@@ -94,4 +94,20 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Business::class);
     }
+
+    public function minigameRecords()
+    {
+        return $this->hasMany(MinigameRecord::class);
+    }
+
+    public function getMinigameDiscountPercentage()
+    {
+        // Get all world records
+        $worldRecords = MinigameRecord::getWorldRecords();
+        
+        // Count how many of those world records belong to this user
+        $userWorldRecordCount = $worldRecords->where('user_id', $this->id)->count();
+            
+        return $userWorldRecordCount * 25; // 25% discount per world record
+    }
 }
