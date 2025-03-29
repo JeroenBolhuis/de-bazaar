@@ -16,6 +16,9 @@
                         {{ __('Advertisements') }}
                     </x-nav-link>
                     @auth
+                        <x-nav-link :href="route('minigames.index')" :active="request()->routeIs('minigames.*')">
+                            {{ __('Minigames') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
                             {{ __('Favorites') }}
                         </x-nav-link>
@@ -122,6 +125,9 @@
                 {{ __('Advertisements') }}
             </x-responsive-nav-link>
             @auth
+                <x-responsive-nav-link :href="route('minigames.index')" :active="request()->routeIs('minigames.*')">
+                    {{ __('Minigames') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
                     {{ __('Favorites') }}
                 </x-responsive-nav-link>

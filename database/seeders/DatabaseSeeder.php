@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BusinessSeeder::class,
             AdvertisementSeeder::class,
+            MinigameSeeder::class,
         ]);
     }
 }
