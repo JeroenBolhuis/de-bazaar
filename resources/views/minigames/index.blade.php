@@ -51,8 +51,8 @@
                     <span class="text-2xl">🏆</span>
                 </div>
                 <p class="text-center text-yellow-200">
-                    {{ __('Set a world record in any game to earn a 25% discount on all purchases!') }}<br>
-                    {{ __('Each world record adds another 25% - collect them all for maximum savings!') }}
+                    {{ __('Set a world record in any game to earn a 20% discount on all purchases!') }}<br>
+                    {{ __('Each world record adds another 20% - collect them all for maximum savings!') }}
                 </p>
             </div>
 

@@ -28,7 +28,7 @@
                             <div class="bg-yellow-900/50 p-6 rounded-lg inline-block shadow-pixel">
                                 <h4 class="text-2xl font-bold text-yellow-300 animate-neonFlicker mb-2">🏆 {{ __('NEW WORLD RECORD!') }} 🏆</h4>
                                 <p class="text-yellow-200">
-                                    {{ __('Congratulations! You\'ve earned a 25% discount on all purchases!') }}
+                                    {{ __('Congratulations! You\'ve earned a 20% discount on all purchases!') }}
                                 </p>
                             </div>
                         </div>

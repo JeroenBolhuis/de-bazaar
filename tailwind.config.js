@@ -13,6 +13,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                pixel: ['"Press Start 2P"', 'cursive'],
             },
             screens: {
                 xs: '480px',
@@ -29,11 +30,16 @@ export default {
                 arcadeFloat: {
                     '0%, 100%': { transform: 'translateY(0px)' },
                     '50%': { transform: 'translateY(-10px)' }
+                },
+                wiggle: {
+                    '0%, 100%': { transform: 'rotate(12deg) scale(1)' },
+                    '50%': { transform: 'rotate(12deg) scale(1.1)' }
                 }
             },
             animation: {
                 neonFlicker: 'neonFlicker 2s infinite',
-                arcadeFloat: 'arcadeFloat 3s ease-in-out infinite'
+                arcadeFloat: 'arcadeFloat 3s ease-in-out infinite',
+                wiggle: 'wiggle 1s ease-in-out infinite'
             },
             boxShadow: {
                 'pixel': '0 0 0 3px #fff, 0 0 0 6px #ff00de'
