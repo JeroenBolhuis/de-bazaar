@@ -357,7 +357,7 @@
                 const isCorrect = isTrue === currentStatement.isTrue;
                 
                 if (isCorrect) {
-                    score += 10;
+                    score += 1;
                     gameContainer.classList.add('correct-flash');
                     setTimeout(() => gameContainer.classList.remove('correct-flash'), 500);
                 } else {

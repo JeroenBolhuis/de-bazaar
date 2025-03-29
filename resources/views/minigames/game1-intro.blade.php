@@ -30,13 +30,13 @@
                                 <div class="w-16 h-16 rounded-full bg-green-500 mb-2 mx-auto flex items-center justify-center text-2xl">
                                     🎯
                                 </div>
-                                <p class="text-green-400">+10 points</p>
+                                <p class="text-green-400">+1 point</p>
                             </div>
                             <div class="text-center">
                                 <div class="w-16 h-16 rounded-full bg-red-600 mb-2 mx-auto flex items-center justify-center text-2xl">
                                     🎯
                                 </div>
-                                <p class="text-red-400">-20 points</p>
+                                <p class="text-red-400">-2 points</p>
                             </div>
                         </div>
                         <p class="text-gray-300">

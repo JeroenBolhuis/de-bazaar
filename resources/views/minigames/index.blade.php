@@ -16,7 +16,22 @@
                         @foreach($worldRecords as $record)
                             <div class="bg-black/50 p-6 rounded-lg shadow-pixel">
                                 <div class="text-xl font-bold text-yellow-300 mb-2">
-                                    {{ $record->game_type === 'game1' ? '🎯 Quick Click' : '🔢 Number Memory' }}
+                                    @switch($record->game_type)
+                                        @case('game1')
+                                            🎯 Quick Click
+                                            @break
+                                        @case('game2')
+                                            🔢 Number Memory
+                                            @break
+                                        @case('game3')
+                                            🎨 Pattern Match
+                                            @break
+                                        @case('game4')
+                                            ⚡ Quick Decision
+                                            @break
+                                        @default
+                                            {{ $record->game_type }}
+                                    @endswitch
                                 </div>
                                 <div class="text-white">
                                     <span class="text-yellow-400">Champion:</span> {{ $record->user->name }}<br>
