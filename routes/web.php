@@ -11,6 +11,7 @@ use App\Http\Controllers\SalesAndPurchaseController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MinigameController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,6 +45,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Minigame routes
+    Route::prefix('minigames')->name('minigames.')->group(function () {
+        Route::get('/', [MinigameController::class, 'index'])->name('index');
+        Route::get('/game1/intro', [MinigameController::class, 'game1Intro'])->name('game1.intro');
+        Route::get('/game1', [MinigameController::class, 'game1'])->name('game1');
+        Route::get('/game2/intro', [MinigameController::class, 'game2Intro'])->name('game2.intro');
+        Route::get('/game2', [MinigameController::class, 'game2'])->name('game2');
+        Route::get('/game3/intro', [MinigameController::class, 'game3Intro'])->name('game3.intro');
+        Route::get('/game3', [MinigameController::class, 'game3'])->name('game3');
+        Route::get('/game4/intro', [MinigameController::class, 'game4Intro'])->name('game4.intro');
+        Route::get('/game4', [MinigameController::class, 'game4'])->name('game4');
+        Route::post('/submit-score', [MinigameController::class, 'submitScore'])->name('submit-score');
+        Route::get('/results', [MinigameController::class, 'results'])->name('results');
+    });
 
     // Advertisements management
     Route::middleware(['can:sell-advertisements'])->group(function () {
