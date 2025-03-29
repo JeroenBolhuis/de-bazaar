@@ -136,12 +136,12 @@
                 if (!gameActive) return;
 
                 if (target.classList.contains('target-green')) {
-                    score += 10;
+                    score += 1;
                     // Add hit effect
                     target.style.transform = 'scale(1.3)';
                     setTimeout(() => target.style.transform = '', 100);
                 } else {
-                    score -= 20;
+                    score -= 2;
                     // Add miss effect
                     gameContainer.style.backgroundColor = 'rgba(220, 38, 38, 0.2)';
                     setTimeout(() => gameContainer.style.backgroundColor = '', 100);

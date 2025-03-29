@@ -49,7 +49,7 @@
                         </p>
                         <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto mt-4">
                             <div class="bg-green-900/50 p-4 rounded-lg">
-                                <p class="text-green-400 font-bold">Correct: +10 pts</p>
+                                <p class="text-green-400 font-bold">Correct: +1 point</p>
                             </div>
                             <div class="bg-red-900/50 p-4 rounded-lg">
                                 <p class="text-red-400 font-bold">Wrong: -1 ❤️</p>

@@ -18,16 +18,16 @@ class MinigameSeeder extends Seeder
         foreach ($users as $user) {
             // 50% chance for each game
             if (rand(0, 1)) {
-                // Quick Click game (points between -50 and 100)
+                // Quick Click game
                 MinigameRecord::create([
                     'user_id' => $user->id,
                     'game_type' => 'game1',
-                    'score' => rand(-5, 10) * 10
+                    'score' => rand(-5, 10)
                 ]);
             }
 
             if (rand(0, 1)) {
-                // Number Memory game (levels between 1 and 9)
+                // Number Memory game
                 MinigameRecord::create([
                     'user_id' => $user->id,
                     'game_type' => 'game2',
@@ -36,7 +36,7 @@ class MinigameSeeder extends Seeder
             }
 
             if (rand(0, 1)) {
-                // Pattern Match game (levels between 1 and 12)
+                // Pattern Match game
                 MinigameRecord::create([
                     'user_id' => $user->id,
                     'game_type' => 'game3',
@@ -45,11 +45,11 @@ class MinigameSeeder extends Seeder
             }
 
             if (rand(0, 1)) {
-                // True/False game (levels between 1 and 10)
+                // True/False game
                 MinigameRecord::create([
                     'user_id' => $user->id,
                     'game_type' => 'game4',
-                    'score' => rand(4, 17) * 10
+                    'score' => rand(4, 17)
                 ]);
             }
         }
