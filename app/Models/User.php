@@ -108,6 +108,6 @@ class User extends Authenticatable
         // Count how many of those world records belong to this user
         $userWorldRecordCount = $worldRecords->where('user_id', $this->id)->count();
             
-        return $userWorldRecordCount * 25; // 25% discount per world record
+        return $userWorldRecordCount * 20; // 20% discount per world record
     }
 }

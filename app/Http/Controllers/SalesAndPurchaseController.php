@@ -313,9 +313,17 @@ class SalesAndPurchaseController extends Controller
     {
         $user = auth()->user();
 
+        // Calculate discount if not an auction
+        $discountPercentage = 0;
+        if ($advertisement->type !== 'auction') {
+            $discountPercentage = $user->getMinigameDiscountPercentage();
+        }
+
         $user->purchases()->create([
             'advertisement_id' => $advertisement->id,
             'purchase_date' => now(),
+            'discount_percentage' => $discountPercentage,
+            'original_price' => $advertisement->price,
         ]);
 
         return redirect()->route('purchases.index')->with('success', 'Product purchased successfully!');
@@ -359,11 +367,17 @@ class SalesAndPurchaseController extends Controller
             return back()->with('error', 'The item is not available for the selected dates.');
         }
 
+        // Calculate discount
+        $user = auth()->user();
+        $discountPercentage = $user->getMinigameDiscountPercentage();
+
         $rentalPeriod = new RentalPeriod();
         $rentalPeriod->advertisement_id = $advertisement->id;
         $rentalPeriod->user_id = $user_id;
         $rentalPeriod->start_date = $verified['start_date'];
         $rentalPeriod->end_date = $verified['end_date'];
+        $rentalPeriod->discount_percentage = $discountPercentage;
+        $rentalPeriod->original_price = $advertisement->price;
         $rentalPeriod->save();
 
         return redirect()->route('purchases.index')->with('success', 'Advertisement rented successfully!');
