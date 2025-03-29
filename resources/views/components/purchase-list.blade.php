@@ -50,8 +50,43 @@
             @if(count($sales) > 0)
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($sales as $sale)
-                        <div class="transition duration-150 ease-in-out hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <x-sale-item :sale="$sale" :type="$type" />
+                        <div class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-150 ease-in-out">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    @if($sale->advertisement->image)
+                                        <img src="{{ Storage::url($sale->advertisement->image) }}" alt="{{ $sale->advertisement->title }}" class="w-16 h-16 object-cover rounded-lg">
+                                    @else
+                                        <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                                            <span class="text-gray-400 dark:text-gray-500">No image</span>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                            {{ $sale->advertisement->title }}
+                                        </h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $sale->purchase_date->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    @if($sale->discount_percentage > 0)
+                                        <div class="relative inline-block">
+                                            <div class="text-sm text-gray-500 line-through">
+                                                €{{ number_format($sale->original_price, 2) }}
+                                            </div>
+                                            <div class="text-lg font-semibold text-green-500">
+                                                €{{ number_format($sale->final_price, 2) }}
+                                                <span class="text-xs font-normal text-gray-500">(-{{ $sale->discount_percentage }}%)</span>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                            €{{ number_format($sale->original_price, 2) }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -81,8 +116,43 @@
             @if(count($rentals) > 0)
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($rentals as $rental)
-                        <div class="transition duration-150 ease-in-out hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <x-rental-item :rental="$rental" :type="$type === 'purchased' ? 'rented' : 'rented-out'" />
+                        <div class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-150 ease-in-out">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    @if($rental->advertisement->image)
+                                        <img src="{{ Storage::url($rental->advertisement->image) }}" alt="{{ $rental->advertisement->title }}" class="w-16 h-16 object-cover rounded-lg">
+                                    @else
+                                        <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                                            <span class="text-gray-400 dark:text-gray-500">No image</span>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                            {{ $rental->advertisement->title }}
+                                        </h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $rental->start_date->format('M d, Y') }} - {{ $rental->end_date->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    @if($rental->discount_percentage > 0)
+                                        <div class="relative inline-block">
+                                            <div class="text-sm text-gray-500 line-through">
+                                                €{{ number_format($rental->original_price, 2) }}
+                                            </div>
+                                            <div class="text-lg font-semibold text-green-500">
+                                                €{{ number_format($rental->final_price, 2) }}
+                                                <span class="text-xs font-normal text-gray-500">(-{{ $rental->discount_percentage }}%)</span>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                            €{{ number_format($rental->original_price, 2) }}/day
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     @endforeach
                 </div>

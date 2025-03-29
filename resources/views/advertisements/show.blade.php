@@ -1,6 +1,9 @@
 <x-app-layout>
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     @endpush
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -60,14 +63,69 @@
                         <div class="flex justify-between gap-4">
                             <div>
                                 <h1 class="text-3xl font-bold dark:text-white">{{ $advertisement->title }}</h1>
-                                <p class="text-gray-600 dark:text-gray-300">{{ $advertisement->description }}</p>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">{{ $advertisement->description }}</p>
                                 
                                 <!-- Price Section -->
-                                <div class="text-2xl font-semibold dark:text-white">
-                                    €{{ number_format($advertisement->highestBidOrPrice->amount, 2) }}
-                                    @if($advertisement->type === 'rental')
-                                        <span class="text-base font-normal text-gray-600 dark:text-gray-400">/day</span>
-                                    @endif
+                                <div class="text-2xl font-semibold dark:text-white mt-4">
+                                    @auth
+                                        @if($advertisement->type !== 'auction')
+                                            @php
+                                                $discountPercentage = auth()->user()->getMinigameDiscountPercentage();
+                                                $originalPrice = $advertisement->price;
+                                                $finalPrice = $originalPrice * (1 - $discountPercentage / 100);
+                                            @endphp
+                                            @if($discountPercentage > 0)
+                                                <div class="relative inline-block mt-8">
+                                                    <!-- Original Price (Crossed Out) -->
+                                                    <div class="absolute -top-8 left-0">
+                                                        <span class="text-gray-500 line-through decoration-red-500 decoration-4">
+                                                            €{{ number_format($originalPrice, 2) }}
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    <!-- Final Price -->
+                                                    <div class="text-3xl text-green-500 font-pixel">
+                                                        €{{ number_format($finalPrice, 2) }}@if($advertisement->type === 'rental')<span class="text-base text-gray-600 dark:text-gray-400">/day</span>@endif
+                                                    </div>
+
+                                                    <!-- Discount Badge -->
+                                                    <div class="absolute -top-8 -right-20 bg-yellow-400 text-black px-3 py-2 rounded-lg text-sm font-pixel shadow-lg animate-wiggle">
+                                                        <div class="relative">
+                                                            <span class="block">-{{ $discountPercentage }}%</span>
+                                                            <span class="block text-xs">OFF!</span>
+                                                            <!-- Retro Stars -->
+                                                            <span class="absolute -top-2 -left-2 text-yellow-600">★</span>
+                                                            <span class="absolute -bottom-2 -right-2 text-yellow-600">★</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="inline-block transform rotate-2">
+                                                    <span class="text-2xl dark:text-white">
+                                                        €{{ number_format($advertisement->price, 2) }}
+                                                        @if($advertisement->type === 'rental')
+                                                            <span class="text-base font-normal text-gray-600 dark:text-gray-400">/day</span>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div class="inline-block transform rotate-2">
+                                                <span class="text-2xl dark:text-white">
+                                                    €{{ number_format($advertisement->highestBidOrPrice->amount, 2) }}
+                                                </span>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="inline-block transform rotate-2">
+                                            <span class="text-2xl dark:text-white">
+                                                €{{ number_format($advertisement->highestBidOrPrice->amount, 2) }}
+                                                @if($advertisement->type === 'rental')
+                                                    <span class="text-base font-normal text-gray-600 dark:text-gray-400">/day</span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                    @endauth
                                 </div>
                             </div>
                             <!-- QR Code Section -->
