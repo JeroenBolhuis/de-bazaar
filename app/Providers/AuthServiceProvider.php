@@ -46,5 +46,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('sell-advertisements', function ($user) {
             return in_array($user->role, ['admin', 'seller', 'business']);
         });
+
+        // Gate for managing business settings
+        Gate::define('manage-business', function ($user) {
+            return $user->isBusiness() || $user->isAdmin();
+        });
     }
 } 

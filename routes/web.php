@@ -81,9 +81,8 @@ Route::middleware(['auth'])->group(function () {
     // Business settings (for business users)
     Route::middleware(['can:manage-business'])->group(function () {
         Route::get('/business/settings', [BusinessController::class, 'settings'])->name('business.settings');
-        Route::put('/business/settings', [BusinessController::class, 'updateSettings'])->name('business.settings.update');
+        Route::match(['post', 'put'], '/business/domain', [BusinessController::class, 'updateDomain'])->name('business.domain.update');
         Route::post('/business/theme', [BusinessController::class, 'updateTheme'])->name('business.theme.update');
-        Route::post('/business/domain', [BusinessController::class, 'updateDomain'])->name('business.domain.update');
     });
 
     // Favorites route    
@@ -108,4 +107,8 @@ Route::match(['get', 'post'], '/setLocale', function (Request $request) {
     return back();
 })->name('setLocale');
 
+// Include auth routes
 require __DIR__ . '/auth.php';
+
+// Custom domain landing pages (must be after auth routes)
+Route::get('/{domain}', [BusinessController::class, 'landingPage'])->name('business.landing');
