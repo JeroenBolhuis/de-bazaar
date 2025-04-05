@@ -33,5 +33,12 @@ class UserSeeder extends Seeder
             'email' => 'seller@debazaar.nl',
             'role' => 'seller',
         ]);
+
+        // Create business user
+        User::factory()->create([
+            'name' => 'Business Owner',
+            'email' => 'business@debazaar.nl',
+            'role' => 'business',
+        ]);
     }
 }
