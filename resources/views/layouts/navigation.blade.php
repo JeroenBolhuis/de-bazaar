@@ -46,6 +46,11 @@
                             <x-slot name="trigger">
                                 <button
                                     class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                    @if(Auth::user()->profile_image)
+                                        <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
+                                            <img src="{{ Storage::url(Auth::user()->profile_image) }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                                        </div>
+                                    @endif
                                     <div>{{ Auth::user()->name }}</div>
 
                                     <div class="ms-1">
