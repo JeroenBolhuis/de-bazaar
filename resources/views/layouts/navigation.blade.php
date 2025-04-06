@@ -44,7 +44,7 @@
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
-                                <button
+                                <button dusk="user-dropdown-trigger"
                                     class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                     <div>{{ Auth::user()->name }}</div>
 
@@ -77,10 +77,10 @@
                                     @include('components.language_switcher')
                                 </div>
 
-                                <form method="POST" action="{{ route('logout') }}"
+                                <form  method="POST" action="{{ route('logout') }}"
                                       class="border-t border-gray-200 dark:border-gray-600">
                                     @csrf
-                                    <x-dropdown-link :href="route('logout')"
+                                    <x-dropdown-link dusk="logout-link" :href="route('logout')"
                                                      onclick="event.preventDefault();
                                                     this.closest('form').submit();">
                                         {{ __('Log Out') }}
@@ -163,7 +163,7 @@
                             {{ __('Business Settings') }}
                         </x-responsive-nav-link>
                     @endif
-                    
+
                     <!-- Language Switcher -->
                     <div class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-600">
                         @include('components.language_switcher')
