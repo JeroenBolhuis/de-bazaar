@@ -22,8 +22,14 @@ class Business extends Model
         'is_active' => 'boolean',
     ];
 
+    public function components()
+    {
+        return $this->hasMany(BusinessComponent::class)->orderBy('order');
+    }
+
+
     public function users()
     {
         return $this->hasMany(User::class);
     }
-} 
+}

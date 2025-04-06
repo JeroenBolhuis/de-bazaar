@@ -1,22 +1,17 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\Business;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BusinessSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // Get the business user
         $businessUser = User::where('email', 'business@debazaar.nl')->first();
 
-        // Create business for the business user
+        // Create business (don't set user_id here)
         $business = Business::factory()->create([
             'name' => 'Tech Traders',
             'domain' => 'techtraders',
@@ -29,10 +24,10 @@ class BusinessSeeder extends Seeder
             ]),
         ]);
 
-        // Update the business user to link to the business
+        // ✅ Now assign business_id to the user
         $businessUser->update(['business_id' => $business->id]);
 
-        // Create additional businesses
+        // Other businesses not linked to users
         Business::factory()->create([
             'name' => 'Home & Garden Plus',
             'domain' => 'homeandgarden',
@@ -57,4 +52,4 @@ class BusinessSeeder extends Seeder
             ])
         ]);
     }
-} 
+}
