@@ -14,14 +14,21 @@ class BusinessFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    // database/factories/BusinessFactory.php
+
     public function definition(): array
     {
         return [
-            'name' => fake()->company(),
-            'kvk_number' => fake()->numberBetween(10000000, 99999999),
-            'vat_number' => fake()->numberBetween(10000000, 99999999),
-            'domain' => fake()->domainName(),
-            'theme_settings' => null,
+            'name' => $this->faker->company,
+            'domain' => $this->faker->slug,
+            'kvk_number' => $this->faker->randomNumber(8),
+            'vat_number' => 'NL' . $this->faker->randomNumber(9) . 'B01',
+            'theme_settings' => json_encode([
+                'primary_color' => '#3B82F6',
+                'secondary_color' => '#10B981',
+                'font_family' => 'Inter',
+            ]),
         ];
     }
+
 }

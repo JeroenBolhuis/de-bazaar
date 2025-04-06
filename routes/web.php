@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BusinessComponentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\BusinessController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MinigameController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +63,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/results', [MinigameController::class, 'results'])->name('results');
     });
 
+    Route::prefix('business/{business}/components')->name('business.components.')->group(function () {
+        Route::get('/create', [BusinessComponentController::class, 'create'])->name('create');
+        Route::post('/', [BusinessComponentController::class, 'store'])->name('store');
+    });
+
+
+
+    Route::get('/business/{business}/builder', [BusinessComponentController::class, 'builder'])
+        ->name('business.components.builder')
+        ->middleware('auth');
+
+    Route::post('/business/{business}/components/reorder', [BusinessComponentController::class, 'reorder'])
+        ->name('business.components.reorder')
+        ->middleware('auth');
+
+
+
     // Advertisements management
     Route::middleware(['can:sell-advertisements'])->group(function () {
         Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
@@ -73,7 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/advertisements/{advertisement}/bid', [SalesAndPurchaseController::class, 'bid_advertisement'])->name('advertisements.bid');
     Route::get('/advertisements/{advertisement}/review', [ReviewController::class, 'createAdvertisementReview'])->name('advertisements.review');
     Route::post('/advertisements/{advertisement}/review', [ReviewController::class, 'storeAdvertisementReview'])->name('advertisements.review.store');
-    
+
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::get('/users/{user}/review', [ReviewController::class, 'createUserReview'])->name('users.review');
     Route::post('/users/{user}/review', [ReviewController::class, 'storeUserReview'])->name('users.review.store');
@@ -85,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/business/theme', [BusinessController::class, 'updateTheme'])->name('business.theme.update');
     });
 
-    // Favorites route    
+    // Favorites route
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/advertisements/{advertisement}/favorite', [FavoriteController::class, 'toggle'])->name('advertisements.favorite');
 

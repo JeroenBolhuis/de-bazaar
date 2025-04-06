@@ -15,11 +15,11 @@
                         <p class="text-sm text-gray-600 mb-4">
                             {{ __('Set up your custom domain for your business landing page. This will allow customers to visit your business through a unique URL.') }}
                         </p>
-                        
+
                         <form method="POST" action="{{ route('business.domain.update') }}" class="space-y-4">
                             @csrf
                             @method('PUT')
-                            
+
                             <div>
                                 <x-input-label for="domain" :value="__('Custom Domain')" />
                                 <div class="mt-1 flex rounded-md shadow-sm">
@@ -38,12 +38,12 @@
                                 </div>
                                 <x-input-error class="mt-2" :messages="$errors->get('domain')" />
                                 <p class="mt-2 text-sm text-gray-500">
-                                    {{ __('Your custom domain will be available at:') }} 
+                                    {{ __('Your custom domain will be available at:') }}
                                     <span class="font-medium">http://127.0.0.1:8000/<span id="domain-preview">{{ old('domain', auth()->user()->business->domain ?? '') }}</span></span>
                                 </p>
                                 @if(auth()->user()->business->domain)
                                     <div class="mt-4">
-                                        <a href="http://127.0.0.1:8000/{{ auth()->user()->business->domain }}" 
+                                        <a href="http://127.0.0.1:8000/{{ auth()->user()->business->domain }}"
                                            target="_blank"
                                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                             {{ __('Visit Your Business Page') }}
@@ -63,13 +63,41 @@
                         </form>
                     </div>
 
+                    <!-- Page Builder Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Landing Page Builder') }}</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            {{ __('Visually design your business landing page using custom components.') }}
+                        </p>
+
+                        <a href="{{ route('business.components.builder', auth()->user()->business) }}"
+                           class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            {{ __('Open Page Builder') }}
+                        </a>
+                    </div>
+
+
+                    <!-- Page Component Settings Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Landing Page Components') }}</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            {{ __('Add blocks to customize your business landing page.') }}
+                        </p>
+
+                        <a href="{{ route('business.components.create', auth()->user()->business) }}"
+                           class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            {{ __('Add New Component') }}
+                        </a>
+                    </div>
+
+
                     <!-- Theme Settings Section -->
                     <div class="mb-8">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Theme Settings') }}</h3>
                         <form method="POST" action="{{ route('business.theme.update') }}" class="space-y-4">
                             @csrf
                             @method('POST')
-                            
+
                             <div>
                                 <x-input-label for="primary_color" :value="__('Primary Color')" />
                                 <div class="mt-1 flex rounded-md shadow-sm">
@@ -127,4 +155,4 @@
         });
     </script>
     @endpush
-</x-app-layout> 
+</x-app-layout>
