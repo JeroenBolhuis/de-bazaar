@@ -31,6 +31,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop the foreign key and column from users FIRST
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['business_id']);
+            $table->dropColumn('business_id');
+        });
+
+        // Now it's safe to drop the businesses table
         Schema::dropIfExists('businesses');
     }
 };
