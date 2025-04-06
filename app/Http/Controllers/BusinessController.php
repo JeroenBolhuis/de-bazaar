@@ -91,11 +91,15 @@ class BusinessController extends Controller
     public function landingPage($domain)
     {
         $business = Business::where('domain', $domain)->firstOrFail();
-        $listings = Advertisement::where('user_id', $business->user_id)
-            ->where('is_active', true)
-            ->latest()
-            ->paginate(9);
-
+        
+        // Get all types of advertisements from users who belong to this business
+        $listings = Advertisement::whereHas('user', function($query) use ($business) {
+            $query->where('business_id', $business->id);
+        })
+        ->where('is_active', true)
+        ->latest()
+        ->get();
+        
         return view('business.landing', compact('business', 'listings'));
     }
 

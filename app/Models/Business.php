@@ -27,6 +27,10 @@ class Business extends Model
         return $this->hasMany(BusinessComponent::class)->orderBy('order');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function users()
     {
