@@ -2,29 +2,36 @@
 
 namespace Tests\Browser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\User;
+use App\Models\Advertisement;
 
 class ExampleTest extends DuskTestCase
 {
-    use DatabaseMigrations;
 
-    public function testBasicExample(): void
+    protected function setUp(): void
     {
-        $this->browse(function (Browser $browser) {
-            $browser->visit('/')
-                ->assertSee('Je');
+        parent::setUp();
 
-        });
+        if (!static::$seeded) {
+            Artisan::call('migrate:fresh', [
+                '--seed' => true,
+                '--env' => 'dusk.local',
+            ]);
+            static::$seeded = true;
+        }
+
+        // Optionally clear any auth cookies before each test
+        \Laravel\Dusk\Browser::$storeScreenshotsAt = base_path('tests/Browser/screenshots');
     }
+
+
 
     /** @test */
     public function user_can_register_without_advertisement_access()
     {
-        Artisan::call('db:seed');
-
         $email = 'testuser@example.com';
 
         $this->browse(function (Browser $browser) use ($email) {
@@ -42,60 +49,51 @@ class ExampleTest extends DuskTestCase
     }
 
     /** @test */
+    /** @test */
     public function user_can_login_without_advertisement_access()
     {
-        Artisan::call('db:seed');
-
-        $email = 'loginuser' . uniqid() . '@example.com';
+        $email = 'user@debazaar.nl';
         $password = 'Jagoed123!';
 
-        // Create a user directly using Eloquent (outside browser)
-        \App\Models\User::factory()->create([
-            'name' => 'Login User',
-            'email' => $email,
-            'password' => bcrypt($password),
-        ]);
+        // Ensure password is correct for seeded user
+        $user = \App\Models\User::where('email', $email)->first();
+        if (!$user) {
+            throw new \Exception("User with email {$email} not found. Did you seed the database?");
+        }
+        $user->update(['password' => bcrypt($password)]);
 
         $this->browse(function (Browser $browser) use ($email, $password) {
+            // Force logout by clearing cookies and visiting logout route
+            $browser->driver->manage()->deleteAllCookies();
+            $browser->visit('/logout')
+                ->pause(300);
+
+            // Perform login
             $browser->visit(route('login'))
+                ->screenshot('login-form-loaded')
                 ->type('email', $email)
                 ->type('password', $password)
                 ->press('LOG IN')
                 ->pause(1000)
-                ->screenshot('after-login')
-                ->assertPathIs('/dashboard')
-                ->visit(route('advertisements.create'));
+                ->screenshot('jagoed-in-dashboard')
+                ->assertPathIs('/dashboard');
         });
     }
+
+
 
     /** @test */
     public function user_can_logout_using_dropdown()
     {
-        Artisan::call('db:seed');
+        $user = $this->loginAndReturnSeededUser('user@debazaar.nl');
 
-        $email = 'logoutuser' . uniqid() . '@example.com';
-        $password = 'Jagoed123!';
-
-        \App\Models\User::factory()->create([
-            'name' => 'Logout Tester',
-            'email' => $email,
-            'password' => bcrypt($password),
-        ]);
-
-        $this->browse(function (Browser $browser) use ($email, $password) {
-            $browser->visit(route('login'))
-                ->type('email', $email)
-                ->type('password', $password)
-                ->press('LOG IN')
-                ->pause(1000)
-                ->assertPathIs('/dashboard')
-                // 👇 Click on the user name to open dropdown
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($user)
+                ->visit('/dashboard')
                 ->click('@user-dropdown-trigger')
                 ->pause(300)
-                // 👇 Click on the 'Log Out' option inside the dropdown
                 ->click('@logout-link')
                 ->pause(500)
-                // 👇 Confirm we're back on home or login
                 ->assertPathIs('/')
                 ->assertGuest();
         });
@@ -104,66 +102,72 @@ class ExampleTest extends DuskTestCase
     /** @test */
     public function user_can_add_advertisment()
     {
-        Artisan::call('db:seed');
+        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
 
-        $email = 'logoutuser' . uniqid() . '@example.com';
-        $password = 'Jagoed123!';
-
-        \App\Models\User::factory()->create([
-            'name' => 'Logout Tester',
-            'email' => $email,
-            'password' => bcrypt($password),
-        ]);
-
-        $this->browse(function (Browser $browser) use ($email, $password) {
-            $browser->visit(route('login'))
-                ->type('email', $email)
-                ->type('password', $password)
-                ->press('LOG IN')
-                ->pause(1000)
-                ->assertPathIs('/dashboard')
-                // 👇 Click on the user name to open dropdown
-                ->click('@user-dropdown-trigger')
-                ->pause(300)
-                // 👇 Click on the 'Log Out' option inside the dropdown
-                ->click('@logout-link')
-                ->pause(500)
-                // 👇 Confirm we're back on home or login
-                ->assertPathIs('/')
-                ->assertGuest();
-        });
-    }
-    /** @test */
-    public function user_can_navigate_to_create_advertisement()
-    {
-        // Arrange
-        $email = 'creator' . uniqid() . '@example.com';
-        $password = 'Jagoed123!';
-
-        $user = \App\Models\User::factory()->create([
-            'email' => $email,
-            'password' => bcrypt($password),
-            'can_sell' => true, // ✅ heel belangrijk!
-        ]);
-
-        // Act
-        $this->browse(function (Browser $browser) use ($email, $password) {
-            $browser->visit(route('login'))
-                ->type('email', $email)
-                ->type('password', $password)
-                ->press('Login') // of 'Inloggen', afhankelijk van je label
-                ->assertPathIs('/dashboard')
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($user)
                 ->visit(route('advertisements.index'))
-
-                // Check of de knop zichtbaar is
-                ->assertSee('Create Advertisement')
-
-                // Klik op de knop
                 ->clickLink('Create Advertisement')
-
-                // Assert dat we op de juiste route zijn
                 ->assertPathIs('/advertisements/create');
         });
     }
 
+    /** @test */
+    public function user_can_create_listing_advertisement()
+    {
+        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
+
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($user)
+                ->visit(route('advertisements.index'))
+                ->assertSee('Create Advertisement')
+                ->clickLink('Create Advertisement')
+                ->assertPathIs('/advertisements/create')
+                ->select('type', 'listing')
+                ->type('title', 'Test Listing Ad')
+                ->type('description', 'This is a test advertisement created by a Dusk test.')
+                ->type('price', '25')
+                ->press('CREATE LISTING')
+                ->pause(1000)
+                ->assertSee('Back to Advertisements')
+                ->screenshot('after-submitting-listing');
+        });
+    }
+
+    /** @test */
+    public function user_can_favorite_an_advertisement()
+    {
+        $user = User::factory()->create();
+
+        $advertisement = Advertisement::factory()->create([
+            'title' => 'Favoritable Ad',
+            'type' => 'listing',
+            'is_active' => true,
+            'user_id' => $user->id, // Required if user_id is not nullable
+        ]);
+
+        $this->browse(function (Browser $browser) use ($user, $advertisement) {
+            $browser->loginAs($user)
+                ->visit(route('advertisements.index'))
+                ->waitForText('Favoritable Ad')
+                ->assertSee('Favoritable Ad')
+                ->click("@favorite-button-{$advertisement->id}")
+                ->pause(500)
+                ->screenshot('after-favoriting')
+                ->assertSee('Favoritable Ad');
+        });
+    }
+
+    private function loginAndReturnSeededUser(string $email, string $password = 'Jagoed123!'): User
+    {
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            throw new \Exception("User with email {$email} not found. Did you seed the database?");
+        }
+
+        $user->update(['password' => bcrypt($password)]);
+
+        return $user;
+    }
 }

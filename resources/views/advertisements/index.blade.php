@@ -129,7 +129,7 @@
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                     @endif
                                 @endforeach
-                                
+
                                 <select name="sort" onchange="this.form.submit()" class="rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm">
                                     <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('Newest First') }}</option>
                                     <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>{{ __('Price: Low to High') }}</option>
@@ -178,7 +178,7 @@
 
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $advertisement->title }}</h3>
                                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ Str::limit($advertisement->description, 100) }}</p>
-                                        
+
                                         <div class="mt-4 flex items-center justify-between">
                                             <div>
                                                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Price') }}</p>
@@ -203,7 +203,7 @@
 
                                 <!-- Favorite Button -->
                                 @auth
-                                    <div
+                                    <div dusk="favorite-button-{{ $advertisement->id }}"
                                         x-data="{ favorited: {{ auth()->user()->favorites->contains($advertisement) ? 'true' : 'false' }}, loading: false }"
                                         class="absolute top-2 right-2"
                                     >
@@ -272,17 +272,17 @@
             const typeCheckboxes = document.querySelectorAll('input[name="types[]"]');
             const auctionFilters = document.querySelector('[x-data*="showAuctionFilters"]');
             const rentalFilters = document.querySelector('[x-data*="showRentalFilters"]');
-            
+
             if (auctionFilters && rentalFilters) {
                 typeCheckboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', function() {
                         const showAuction = document.querySelector('input[name="types[]"][value="auction"]').checked;
                         const showRental = document.querySelector('input[name="types[]"][value="rental"]').checked;
-                        
+
                         if (auctionFilters.__x) {
                             auctionFilters.__x.$data.showAuctionFilters = showAuction;
                         }
-                        
+
                         if (rentalFilters.__x) {
                             rentalFilters.__x.$data.showRentalFilters = showRental;
                         }
@@ -292,4 +292,4 @@
         });
     </script>
     @endpush
-</x-app-layout> 
+</x-app-layout>
