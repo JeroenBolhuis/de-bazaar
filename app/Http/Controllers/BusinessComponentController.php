@@ -46,18 +46,67 @@ class BusinessComponentController extends Controller
     {
         $orderData = json_decode($request->order, true);
 
+        // Handle updates to existing components
+        if ($request->has('components')) {
+            foreach ($request->components as $id => $data) {
+                $component = BusinessComponent::findOrFail($id);
+                
+                if ($component->type === 'intro_text' && isset($data['content'])) {
+                    $component->content = $data['content'];
+                }
+                
+                if ($component->type === 'image' && isset($data['image'])) {
+                    // Delete old image if it exists
+                    if ($component->image_path) {
+                        Storage::disk('public')->delete($component->image_path);
+                    }
+                    
+                    // Store new image
+                    $component->image_path = $data['image']->store('business_images', 'public');
+                }
+
+                if ($component->type === 'featured_ads' && isset($data['ad_types'])) {
+                    $component->settings = array_merge($component->settings ?? [], [
+                        'ad_types' => $data['ad_types']
+                    ]);
+                }
+                
+                $component->save();
+            }
+        }
+
+        // Update component order
         foreach ($orderData as $item) {
+            if (strpos($item['id'], 'new_') === 0) {
+                continue; // Skip new components as they'll be handled below
+            }
             BusinessComponent::where('id', $item['id'])->update(['order' => $item['order']]);
         }
 
-        // (Optional) handle new components
-        if ($request->filled('new_components')) {
-            foreach ($request->input('new_components') as $index => $type) {
-                BusinessComponent::create([
+        // Handle new components
+        if ($request->has('new_components')) {
+            foreach ($request->new_components as $tempId => $data) {
+                $componentData = [
                     'business_id' => $business->id,
-                    'type' => $type,
-                    'order' => count($orderData) + $index,
-                ]);
+                    'type' => $data['type'],
+                    'order' => count($orderData),
+                ];
+
+                if ($data['type'] === 'intro_text' && isset($data['content'])) {
+                    $componentData['content'] = $data['content'];
+                }
+
+                if ($data['type'] === 'image' && isset($data['image'])) {
+                    $componentData['image_path'] = $data['image']->store('business_images', 'public');
+                }
+
+                if ($data['type'] === 'featured_ads' && isset($data['ad_types'])) {
+                    $componentData['settings'] = [
+                        'ad_types' => $data['ad_types']
+                    ];
+                }
+
+                BusinessComponent::create($componentData);
             }
         }
 
