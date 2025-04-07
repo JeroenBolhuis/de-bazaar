@@ -43,6 +43,7 @@ Route::post('/contracts', [ContractController::class, 'store'])->name('contracts
 Route::get('/contracts/{contract}/edit', [ContractController::class, 'edit'])->name('contracts.edit');
 Route::put('/contracts/{contract}', [ContractController::class, 'update'])->name('contracts.update');
 Route::delete('/contracts/{contract}', [ContractController::class, 'destroy'])->name('contracts.destroy');
+Route::get('/contracts/export-pdf', [ContractController::class, 'exportPdf'])->name('contracts.export-pdf');
 
 // Authenticated routes that require contract acceptance
 Route::middleware(['auth', 'contracts.accepted'])->group(function () {
