@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Business;
+use App\Models\Contract;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Validation\Rule;
@@ -36,6 +40,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', Rule::in(['user', 'seller', 'business'])],
+            'contract_agreement' => ['required', 'accepted'],
         ];
 
         // Custom error messages
@@ -89,6 +94,9 @@ class RegisteredUserController extends Controller
             throw $e;
         }
 
+        // Get all active contracts
+        $activeContracts = Contract::where('is_active', true)->pluck('id')->toArray();
+
         // Create business if role is business
         $business_id = null;
         if ($request->role === 'business') {
@@ -139,7 +147,7 @@ class RegisteredUserController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'role' => $validated['role'],
-                'business_id' => $business_id,
+                'business_id' => $business_id ?? null,
             ]));
 
             $user = User::create([
@@ -147,21 +155,29 @@ class RegisteredUserController extends Controller
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'role' => $validated['role'],
-                'business_id' => $business_id,
+                'business_id' => $business_id ?? null,
                 'phone' => $validated['phone'] ?? null,
                 'address' => $validated['address'] ?? null,
                 'postal_code' => $validated['postal_code'] ?? null,
                 'city' => $validated['city'] ?? null,
             ]);
 
+            // Attach all active contracts
+            $now = now();
+            foreach ($activeContracts as $contractId) {
+                $user->contracts()->attach($contractId);
+            }
+
             \Log::info('User created successfully with ID: ' . $user->id);
         } catch (\Exception $e) {
             \Log::error('Failed to create user: ' . $e->getMessage());
-            if ($business_id) {
+            if (isset($business_id)) {
                 Business::destroy($business_id);
             }
             return back()->withErrors(['user' => 'Failed to create user account: ' . $e->getMessage()])->withInput();
         }
+
+        event(new Registered($user));
 
         Auth::login($user);
 

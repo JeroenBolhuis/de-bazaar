@@ -129,6 +129,23 @@
             </div>
         </div>
 
+        <!-- Contract Agreement -->
+        <div class="mt-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" 
+                           id="contract_agreement" 
+                           name="contract_agreement" 
+                           class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                           required>
+                    <label for="contract_agreement" class="text-sm font-medium text-gray-900 dark:text-gray-300">
+                        I agree to the <a href="{{ route('contracts.index') }}" target="_blank" class="text-indigo-600 hover:text-indigo-500 font-bold">contracts</a>
+                    </label>
+                </div>
+            </div>
+            <x-input-error :messages="$errors->get('contract_agreement')" class="mt-2" />
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
