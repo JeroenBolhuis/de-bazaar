@@ -30,8 +30,8 @@
                                 {{ __('My Sales') }}
                             </x-nav-link>
                         @endif
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
+                        <x-nav-link :href="route('contracts.index')" :active="request()->routeIs('contracts.*')">
+                            {{ __('Contracts') }}
                         </x-nav-link>
                     @endauth
 

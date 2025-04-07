@@ -45,15 +45,10 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'contract_approved' => 'boolean',
-            'contract_approved_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     public function favorites()
     {
@@ -109,5 +104,14 @@ class User extends Authenticatable
         $userWorldRecordCount = $worldRecords->where('user_id', $this->id)->count();
             
         return $userWorldRecordCount * 20; // 20% discount per world record
+    }
+
+    /**
+     * Get the contracts accepted by the user.
+     */
+    public function contracts()
+    {
+        return $this->belongsToMany(Contract::class, 'user_contracts')
+                    ->withTimestamps();
     }
 }
