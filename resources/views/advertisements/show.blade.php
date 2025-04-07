@@ -32,7 +32,7 @@
                     </ul>
                 </div>
             @endif
-            
+
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100 relative">
                 <!-- Back Button -->
                 <div class="mb-6">
@@ -64,7 +64,7 @@
                             <div>
                                 <h1 class="text-3xl font-bold dark:text-white">{{ $advertisement->title }}</h1>
                                 <p class="text-gray-600 dark:text-gray-300 mb-4">{{ $advertisement->description }}</p>
-                                
+
                                 <!-- Price Section -->
                                 <div class="text-2xl font-semibold dark:text-white mt-4">
                                     @auth
@@ -82,7 +82,7 @@
                                                             €{{ number_format($originalPrice, 2) }}
                                                         </span>
                                                     </div>
-                                                    
+
                                                     <!-- Final Price -->
                                                     <div class="text-3xl text-green-500 font-pixel">
                                                         €{{ number_format($finalPrice, 2) }}@if($advertisement->type === 'rental')<span class="text-base text-gray-600 dark:text-gray-400">/day</span>@endif
@@ -142,7 +142,7 @@
                         <!-- Seller Info -->
                         <div class="border-t dark:border-gray-700 pt-4 flex items-center justify-between">
                             <a href="{{ route('users.show', $advertisement->user) }}" class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                                <span class="">Posted by {{ $advertisement->user->name }}</span>                        
+                                <span class="">Posted by {{ $advertisement->user->name }}</span>
                                 <span class="">({{ $advertisement->user->reviews()->count() }} reviews)</span>
                                 <div class="flex items-center">
                                     @for($i = 1; $i <= 5; $i++)
@@ -248,7 +248,7 @@
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Bid Amount</label>
                                                 <input type="number" name="amount" step="0.01" min="{{ $advertisement->bids->max('amount') ?? $advertisement->price }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400">
                                             </div>
-                                            
+
                                             @auth
                                                 @php
                                                     $userBidCount = App\Models\AuctionBidding::whereHas('advertisement', function($query) {
@@ -268,7 +268,7 @@
                                                     @endif
                                                 </div>
                                             @endauth
-                                            
+
                                             <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
                                                 Place Bid
                                             </button>
@@ -318,6 +318,12 @@
                                 </button>
                             </div>
                         @endauth
+
+                        <!-- Owner Actions -->
+                        @if(auth()->check() && auth()->id() === $advertisement->user_id)
+                            <div class="mt-6 space-y-4">
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -431,10 +437,10 @@
                                         const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
                                         const days =  Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Add 1 to include both start and end dates
                                         const totalCost = days * pricePerDay;
-                                        
+
                                         document.getElementById('start_date').value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
                                         document.getElementById('end_date').value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
-                                        
+
                                         rentalDaysSpan.textContent = days;
                                         totalCostSpan.textContent = totalCost.toFixed(2);
                                         totalCostDiv.classList.remove('hidden');
