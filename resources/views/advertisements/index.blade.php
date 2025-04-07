@@ -145,7 +145,7 @@
                         @forelse($advertisements as $advertisement)
                             <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden relative">
                                 <!-- Link to Detail Page -->
-                                <a href="{{ route('advertisements.show', $advertisement->id) }}" class="block hover:opacity-90 transition">
+                                <a dusk="advertisements-show" href="{{ route('advertisements.show', $advertisement->id) }}" class="block hover:opacity-90 transition">
                                     <!-- Advertisement Image -->
                                     <div class="aspect-w-3 aspect-h-2">
                                         @if($advertisement->image)
