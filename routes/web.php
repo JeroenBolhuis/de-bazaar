@@ -12,6 +12,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MinigameController;
+use App\Http\Controllers\ContractController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,8 +35,17 @@ Route::get('/rentals/{rental}', [RentalController::class, 'show'])->name('rental
 
 Route::post('/rentals/{advertisement}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
 
-// Authenticated routes
-Route::middleware(['auth'])->group(function () {
+// Contract routes
+Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
+Route::post('/contracts/accept', [ContractController::class, 'accept'])->name('contracts.accept');
+Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
+Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
+Route::get('/contracts/{contract}/edit', [ContractController::class, 'edit'])->name('contracts.edit');
+Route::put('/contracts/{contract}', [ContractController::class, 'update'])->name('contracts.update');
+Route::delete('/contracts/{contract}', [ContractController::class, 'destroy'])->name('contracts.destroy');
+
+// Authenticated routes that require contract acceptance
+Route::middleware(['auth', 'contracts.accepted'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Auction routes
@@ -77,14 +87,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::get('/users/{user}/review', [ReviewController::class, 'createUserReview'])->name('users.review');
     Route::post('/users/{user}/review', [ReviewController::class, 'storeUserReview'])->name('users.review.store');
-
-    // Business settings (for business users)
-    Route::middleware(['can:manage-business'])->group(function () {
-        Route::get('/business/settings', [BusinessController::class, 'settings'])->name('business.settings');
-        Route::put('/business/settings', [BusinessController::class, 'updateSettings'])->name('business.settings.update');
-        Route::post('/business/theme', [BusinessController::class, 'updateTheme'])->name('business.theme.update');
-        Route::post('/business/domain', [BusinessController::class, 'updateDomain'])->name('business.domain.update');
-    });
 
     // Favorites route    
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
