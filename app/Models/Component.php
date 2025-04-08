@@ -2,29 +2,45 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Component extends Model
 {
-    use HasFactory;
+    public const TYPE_OPTIONS = [
+        'about',
+        'contact',
+        'featured_advertisements',
+        'image',
+        'hero',
+    ];
 
     protected $fillable = [
+        'business_id',
         'type',
-        'label',
-        'is_active',
+        'order',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'type' => 'string',
     ];
 
     /**
-     * Get the business components that use this component type.
+     * Validation rules for the model.
      */
-    public function businessComponents(): HasMany
+    public static function rules(): array
     {
-        return $this->hasMany(BusinessComponent::class);
+        return [
+            'type' => 'required|string|in:' . implode(',', array_keys(self::TYPE_OPTIONS)),
+            'order' => 'required|integer|min:0',
+        ];
+    }
+
+    /**
+     * Get the business that owns the component.
+     */
+    public function business(): BelongsTo
+    {
+        return $this->belongsTo(Business::class);
     }
 } 
