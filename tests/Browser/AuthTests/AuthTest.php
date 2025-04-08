@@ -8,27 +8,27 @@ use App\Models\User;
 class AuthTest extends DuskTestCase
 {
     #[Test]
-    public function user_can_register_without_advertisement_access()
-    {
-        $email = 'testuser@example.com';
+public function user_can_register_without_advertisement_access()
+{
+    $email = 'testuser@example.com';
 
-        $this->browse(function (Browser $browser) use ($email) {
-// Ensure user is logged out first
-            $browser->visit('/logout') // This triggers Laravel's logout route
+    $this->browse(function (Browser $browser) use ($email) {
+        $browser->visit('/logout') // Log out first if needed
             ->pause(500)
-                ->visit(route('register'))
-                ->screenshot("register-page")
-                ->type('name', 'Test User')
-                ->type('email', $email)
-                ->type('password', 'Jagoed123!')
-                ->type('password_confirmation', 'Jagoed123!')
-                ->press('REGISTREREN')
-                ->pause(1000)
-                ->screenshot('after-registration')
-                ->assertPathIs('/dashboard')
-                ->visit(route('advertisements.create'));
-        });
-    }
+            ->visit(route('register'))
+            ->screenshot("register-page")
+            ->type('name', 'Test User')
+            ->type('email', $email)
+            ->type('password', 'Jagoed123!')
+            ->type('password_confirmation', 'Jagoed123!')
+            ->check('contract_agreement')
+            ->press('REGISTREREN')
+            ->pause(1000)
+            ->screenshot('after-registration')
+            ->assertPathIs('/dashboard')
+            ->visit(route('advertisements.create'));
+    });
+}
 
     #[Test]
     public function user_can_login_without_advertisement_access()
