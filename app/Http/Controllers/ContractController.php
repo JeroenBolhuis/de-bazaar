@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use function Spatie\LaravelPdf\Support\pdf;
 
 class ContractController extends Controller
 {
@@ -80,5 +82,16 @@ class ContractController extends Controller
         }
 
         return redirect()->back()->with('success', 'All contracts have been accepted successfully.');
+    }
+
+    public function exportPdf()
+    {
+        $users = User::with('contracts')->get();
+        $activeContracts = Contract::where('is_active', true)->get();
+
+        return pdf('contracts.export-pdf', [
+            'users' => $users,
+            'activeContracts' => $activeContracts,
+        ])->name('contracts-overview.pdf');
     }
 }
