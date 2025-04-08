@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Advertisement;
 use Carbon\Carbon;
+use App\Services\AdvertisementCsvService;
 
 class AdvertisementController extends Controller
 {
@@ -189,5 +190,55 @@ class AdvertisementController extends Controller
         }
 
         return view('advertisements.show', compact('advertisement', 'blockedDates'));
+    }
+
+    public function import()
+    {
+        return view('advertisements.import');
+    }
+
+    public function processImport(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        try {
+            $csvService = new AdvertisementCsvService();
+            
+            // First do a dry run to validate
+            $results = $csvService->import(
+                $request->file('csv_file')->get(),
+                true, // dry run
+                auth()->user(),
+                $request->file('images', [])
+            );
+
+            if (!empty($results['errors'])) {
+                return back()
+                    ->withErrors($results['errors'])
+                    ->withInput();
+            }
+
+            // If validation passes, do the actual import
+            $results = $csvService->import(
+                $request->file('csv_file')->get(),
+                false, // not a dry run
+                auth()->user(),
+                $request->file('images', [])
+            );
+
+            return redirect()
+                ->route('advertisements.index')
+                ->with('success', __('Successfully imported :count advertisements.', [
+                    'count' => $results['created']
+                ]));
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
     }
 }
