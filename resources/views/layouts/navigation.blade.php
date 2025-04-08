@@ -66,11 +66,6 @@
                                 <x-dropdown-link :href="route('dashboard')">
                                     {{ __('Dashboard') }}
                                 </x-dropdown-link>
-                                @if(Auth::user()->isBusiness())
-                                    <x-dropdown-link :href="route('business.settings')">
-                                        {{ __('Business Settings') }}
-                                    </x-dropdown-link>
-                                @endif
 
                                 <!-- Language Switcher -->
                                 <div class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-600">
