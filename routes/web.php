@@ -24,17 +24,6 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Listing routes
-Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
-Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
-
-// Rental routes
-Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
-Route::get('/rentals/{rental}', [RentalController::class, 'show'])->name('rentals.show');
-
-
-Route::post('/rentals/{advertisement}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
-
 // Contract routes
 Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
 Route::post('/contracts/accept', [ContractController::class, 'accept'])->name('contracts.accept');
@@ -113,5 +102,23 @@ Route::match(['get', 'post'], '/setLocale', function (Request $request) {
     }
     return back();
 })->name('setLocale');
+
+// Business routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/business/settings', [BusinessController::class, 'settings'])->name('business.settings');
+    Route::put('/business/settings', [BusinessController::class, 'updateSettings'])->name('business.settings.update');
+    Route::put('/business/theme', [BusinessController::class, 'updateTheme'])->name('business.theme.update');
+    Route::put('/business/domain', [BusinessController::class, 'updateDomain'])->name('business.domain.update');
+    
+    // Component management routes
+    Route::get('/business/edit', [BusinessController::class, 'editComponents'])->name('business.components.edit');
+    Route::post('/business/components/add', [BusinessController::class, 'addComponent'])->name('business.components.add');
+    Route::post('/business/components/reorder', [BusinessController::class, 'reorderComponents'])->name('business.components.reorder');
+    Route::delete('/business/components/{pivotId}', [BusinessController::class, 'deleteComponent'])->name('business.components.delete');
+    Route::put('/business/components/{pivotId}', [BusinessController::class, 'updateComponent'])->name('business.components.update');
+});
+
+// Public business landing page routes
+Route::get('/business/{customUrl}', [BusinessController::class, 'showByCustomUrl'])->name('business.show');
 
 require __DIR__ . '/auth.php';

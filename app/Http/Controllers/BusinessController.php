@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Models\Business;
+use App\Models\Component;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class BusinessController extends Controller
 {
@@ -13,8 +17,8 @@ class BusinessController extends Controller
      */
     public function settings(): View
     {
-        // TODO: Implement business settings retrieval
-        return view('business.settings');
+        $business = auth()->user()->business;
+        return view('business.settings', compact('business'));
     }
 
     /**
@@ -22,7 +26,17 @@ class BusinessController extends Controller
      */
     public function updateSettings(Request $request): RedirectResponse
     {
-        // TODO: Implement settings update
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'custom_url' => 'nullable|string|max:255|unique:businesses,custom_url,' . auth()->user()->business_id,
+        ]);
+
+        $business = auth()->user()->business;
+        $business->update([
+            'name' => $request->name,
+            'custom_url' => $request->custom_url ? Str::slug($request->custom_url) : null,
+        ]);
+
         return redirect()->route('business.settings')
             ->with('success', __('Business settings updated successfully.'));
     }
@@ -47,79 +61,136 @@ class BusinessController extends Controller
             ->with('success', __('Business domain updated successfully.'));
     }
 
+
     /**
-     * Display the landing page builder.
+     * Display business landing page by custom URL.
      */
-    public function landingPage(): View
+    public function showByCustomUrl(string $customUrl): View
     {
-        // TODO: Implement landing page builder
-        return view('business.landing-page');
+        $business = Business::where('custom_url', $customUrl)
+            ->with(['components' => function($query) {
+                $query->orderBy('order');
+            }])
+            ->firstOrFail();
+
+        return view('business.landing-page', compact('business'));
     }
 
     /**
-     * Update landing page content.
+     * Display component editor page.
      */
-    public function updateLandingPage(Request $request): RedirectResponse
+    public function editComponents(): View
     {
-        // TODO: Implement landing page update
-        return redirect()->route('business.landing-page')
-            ->with('success', __('Landing page updated successfully.'));
+        $business = auth()->user()->business;
+        $components = $business->components()
+            ->orderBy('order')
+            ->get();
+            
+        $availableTypes = Component::TYPE_OPTIONS;
+        $typeLabels = Component::TYPE_OPTIONS;
+
+        return view('business.edit', compact('components', 'availableTypes', 'typeLabels'));
     }
 
     /**
-     * Display API settings.
+     * Add a new component.
      */
-    public function apiSettings(): View
+    public function addComponent(Request $request): RedirectResponse
     {
-        // TODO: Implement API settings view
-        return view('business.api-settings');
+        $request->validate([
+            'type' => [
+                'required',
+                'string',
+                'in:' . implode(',', Component::TYPE_OPTIONS)
+            ],
+        ]);
+
+        $business = auth()->user()->business;
+        $maxOrder = $business->components()->max('order') ?? 0;
+
+        // Create the component
+        $business->components()->create([
+            'type' => $request->type,
+            'order' => $maxOrder + 1,
+        ]);
+
+        return redirect()->route('business.components.edit')
+            ->with('success', __('Component added successfully.'));
     }
 
     /**
-     * Generate new API key.
+     * Reorder components.
      */
-    public function generateApiKey(Request $request): RedirectResponse
+    public function reorderComponents(Request $request): RedirectResponse
     {
-        // TODO: Implement API key generation
-        return redirect()->route('business.api-settings')
-            ->with('success', __('New API key generated successfully.'));
+        $business = auth()->user()->business;
+        
+        if ($request->has('move_up')) {
+            $componentId = $request->move_up;
+            $component = $business->components()
+                ->where('id', $componentId)
+                ->firstOrFail();
+            
+            $currentOrder = $component->order;
+            
+            // Find the component above
+            $componentAbove = $business->components()
+                ->where('order', $currentOrder - 1)
+                ->first();
+            
+            if ($componentAbove) {
+                // Swap orders
+                $component->update(['order' => $currentOrder - 1]);
+                $componentAbove->update(['order' => $currentOrder]);
+            }
+        } elseif ($request->has('move_down')) {
+            $componentId = $request->move_down;
+            $component = $business->components()
+                ->where('id', $componentId)
+                ->firstOrFail();
+            
+            $currentOrder = $component->order;
+            
+            // Find the component below
+            $componentBelow = $business->components()
+                ->where('order', $currentOrder + 1)
+                ->first();
+            
+            if ($componentBelow) {
+                // Swap orders
+                $component->update(['order' => $currentOrder + 1]);
+                $componentBelow->update(['order' => $currentOrder]);
+            }
+        }
+
+        return redirect()->route('business.components.edit')
+            ->with('success', __('Components reordered successfully.'));
     }
 
     /**
-     * Upload and process CSV file for bulk listings.
+     * Delete a component.
      */
-    public function uploadCsv(Request $request): RedirectResponse
+    public function deleteComponent(int $componentId): RedirectResponse
     {
-        // TODO: Implement CSV upload and processing
-        return redirect()->route('business.settings')
-            ->with('success', __('CSV file processed successfully.'));
-    }
+        $business = auth()->user()->business;
+        
+        // Find and delete the component
+        $component = $business->components()
+            ->where('id', $componentId)
+            ->firstOrFail();
+        
+        $component->delete();
 
-    /**
-     * Display contract management.
-     */
-    public function contracts(): View
-    {
-        // TODO: Implement contracts view
-        return view('business.contracts');
-    }
+        // Reorder remaining components
+        $remainingComponents = $business->components()
+            ->orderBy('order')
+            ->get();
+            
+        foreach ($remainingComponents as $index => $component) {
+            $component->update(['order' => $index + 1]);
+        }
 
-    /**
-     * Upload signed contract.
-     */
-    public function uploadContract(Request $request): RedirectResponse
-    {
-        // TODO: Implement contract upload
-        return redirect()->route('business.contracts')
-            ->with('success', __('Contract uploaded successfully.'));
-    }
-
-    /**
-     * Generate PDF contract.
-     */
-    public function generateContract(string $id)
-    {
-        // TODO: Implement PDF contract generation
-        // Return PDF response
+        return redirect()->route('business.components.edit')
+            ->with('success', __('Component deleted successfully.'));
     }
 }

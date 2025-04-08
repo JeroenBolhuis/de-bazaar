@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Business extends Model
 {
@@ -14,16 +17,35 @@ class Business extends Model
         'kvk_number',
         'vat_number',
         'domain',
+        'custom_url',
         'theme_settings',
     ];
 
     protected $casts = [
-        'theme_settings' => 'json',
-        'is_active' => 'boolean',
+        'theme_settings' => 'array',
     ];
 
-    public function users()
+    /**
+     * Get the users associated with the business.
+     */
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    /**
+     * Get the components associated with the business.
+     */
+    public function components(): HasMany
+    {
+        return $this->hasMany(Component::class)->orderBy('order');
+    }
+
+    /**
+     * Get all the advertisements from all users associated with the business.
+     */
+    public function advertisements(): HasManyThrough
+    {
+        return $this->hasManyThrough(Advertisement::class, User::class);
     }
 } 
