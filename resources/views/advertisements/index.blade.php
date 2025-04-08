@@ -45,25 +45,6 @@
                                 </div>
                             </div>
 
-                            <!-- Categories -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Categories') }}</label>
-                                <div class="space-y-2">
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="categories[]" value="tools" {{ in_array('tools', request('categories', [])) ? 'checked' : '' }} class="rounded border-gray-300 dark:border-gray-700 text-blue-600 shadow-sm">
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Tools') }}</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="categories[]" value="electronics" {{ in_array('electronics', request('categories', [])) ? 'checked' : '' }} class="rounded border-gray-300 dark:border-gray-700 text-blue-600 shadow-sm">
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Electronics') }}</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="categories[]" value="furniture" {{ in_array('furniture', request('categories', [])) ? 'checked' : '' }} class="rounded border-gray-300 dark:border-gray-700 text-blue-600 shadow-sm">
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Furniture') }}</span>
-                                    </label>
-                                </div>
-                            </div>
-
                             <!-- Price Range -->
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Price Range') }}</label>
