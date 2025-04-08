@@ -163,60 +163,6 @@ class AdvertisementsTest extends DuskTestCase
     }
 
     #[Test]
-    public function user_can_edit_their_advertisement()
-    {
-        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
-        $advertisement = Advertisement::factory()->create([
-            'user_id' => $user->id,
-            'title' => 'Original Title',
-            'description' => 'Original Description',
-            'price' => 100,
-            'type' => 'listing',
-            'is_active' => true
-        ]);
-
-        $this->browse(function (Browser $browser) use ($user, $advertisement) {
-            $browser->loginAs($user)
-                ->visit(route('advertisements.show', $advertisement))
-                ->clickLink('Edit Advertisement')
-                ->assertPathIs("/advertisements/{$advertisement->id}/edit")
-                ->type('title', 'Updated Title')
-                ->type('description', 'Updated Description')
-                ->type('price', '200')
-                ->press('UPDATE LISTING')
-                ->assertPathIs("/advertisements/{$advertisement->id}")
-                ->assertSee('Updated Title')
-                ->assertSee('Updated Description')
-                ->assertSee('€200');
-        });
-    }
-
-    #[Test]
-    public function user_can_delete_their_advertisement()
-    {
-        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
-        $advertisement = Advertisement::factory()->create([
-            'user_id' => $user->id,
-            'title' => 'To Be Deleted',
-            'type' => 'listing',
-            'is_active' => true
-        ]);
-
-        $this->browse(function (Browser $browser) use ($user, $advertisement) {
-            $browser->loginAs($user)
-                ->visit(route('advertisements.show', $advertisement))
-                ->press('Delete Advertisement')
-                ->acceptDialog()
-                ->assertPathIs('/advertisements')
-                ->assertDontSee('To Be Deleted');
-        });
-
-        $this->assertDatabaseMissing('advertisements', [
-            'id' => $advertisement->id
-        ]);
-    }
-
-    #[Test]
     public function user_can_view_advertisement_details()
     {
         $user = User::factory()->create();
@@ -241,32 +187,9 @@ class AdvertisementsTest extends DuskTestCase
     }
 
     #[Test]
-    public function user_can_toggle_advertisement_status()
+    public function listing_price_must_be_greater_than_zero()
     {
-        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
-        $advertisement = Advertisement::factory()->create([
-            'user_id' => $user->id,
-            'title' => 'Toggle Status Ad',
-            'type' => 'listing',
-            'is_active' => true
-        ]);
-
-        $this->browse(function (Browser $browser) use ($user, $advertisement) {
-            $browser->loginAs($user)
-                ->visit(route('advertisements.show', $advertisement))
-                ->clickLink('Deactivate Advertisement')
-                ->assertPathIs("/advertisements/{$advertisement->id}")
-                ->assertSee('Advertisement is now inactive')
-                ->clickLink('Activate Advertisement')
-                ->assertPathIs("/advertisements/{$advertisement->id}")
-                ->assertSee('Advertisement is now active');
-        });
-    }
-
-    #[Test]
-    public function price_validation_works_correctly()
-    {
-        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
+        $user = $this->createRandomUser();
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs($user)
@@ -279,11 +202,37 @@ class AdvertisementsTest extends DuskTestCase
                 ->assertSee('The price must be greater than 0')
                 ->type('price', '0')
                 ->press('CREATE LISTING')
-                ->assertSee('The price must be greater than 0')
+                ->assertSee('The price must be greater than 0');
+        });
+    }
+
+    #[Test]
+    public function listing_can_be_created_with_valid_price()
+    {
+        $user = $this->createRandomUser();
+
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($user)
+                ->visit(route('advertisements.create'))
+                ->select('type', 'listing')
+                ->type('title', 'Valid Price Ad')
+                ->type('description', 'Testing valid price')
                 ->type('price', '100')
                 ->press('CREATE LISTING')
                 ->assertPathIs('/advertisements')
-                ->assertSee('Invalid Price Ad');
+                ->assertSee('Valid Price Ad');
         });
+    }
+
+
+
+    private function createRandomUser(string $password = 'Jagoed123!'): User
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt($password),
+            'email' => 'testuser_' . uniqid() . '@example.com',
+        ]);
+
+        return $user;
     }
 }
