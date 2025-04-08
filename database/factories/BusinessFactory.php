@@ -21,6 +21,7 @@ class BusinessFactory extends Factory
             'kvk_number' => fake()->numberBetween(10000000, 99999999),
             'vat_number' => fake()->numberBetween(10000000, 99999999),
             'domain' => fake()->domainName(),
+            'custom_url' => fake()->slug(),
             'theme_settings' => null,
         ];
     }

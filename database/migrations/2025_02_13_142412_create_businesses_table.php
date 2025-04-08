@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('kvk_number', 20)->unique();
             $table->string('vat_number', 20)->unique();
             $table->string('domain')->unique();
+            $table->string('custom_url')->nullable();
             $table->json('theme_settings')->nullable();
             $table->timestamps();
         });
