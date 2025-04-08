@@ -36,11 +36,9 @@ class Business extends Model
     /**
      * Get the components associated with the business.
      */
-    public function components(): BelongsToMany
+    public function components(): HasMany
     {
-        return $this->belongsToMany(Component::class, 'business_components')
-            ->withPivot(['id', 'title', 'content', 'order'])
-            ->orderBy('business_components.order');
+        return $this->hasMany(Component::class)->orderBy('order');
     }
 
     /**

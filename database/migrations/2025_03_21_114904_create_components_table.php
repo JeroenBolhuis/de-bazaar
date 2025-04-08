@@ -8,12 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('business_components', function (Blueprint $table) {
+        Schema::create('components', function (Blueprint $table) {
             $table->id();
             $table->foreignId('business_id')->constrained()->onDelete('cascade');
-            $table->string('type');
-            $table->string('title')->nullable();
-            $table->text('content')->nullable();
+            $table->enum('type', ['hero', 'about', 'contact', 'featured_advertisements', 'image']);
             $table->integer('order')->default(0);
             $table->timestamps();
         });
@@ -21,7 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('component_advertisement');
-        Schema::dropIfExists('business_components');
+        Schema::dropIfExists('components');
     }
 }; 
