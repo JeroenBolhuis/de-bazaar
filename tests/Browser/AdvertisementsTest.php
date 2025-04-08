@@ -162,38 +162,111 @@ class AdvertisementsTest extends DuskTestCase
         ]);
     }
 
+    #[Test]
+    public function user_can_edit_their_advertisement()
+    {
+        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
+        $advertisement = Advertisement::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'Original Title',
+            'description' => 'Original Description',
+            'price' => 100,
+            'type' => 'listing',
+            'is_active' => true
+        ]);
+
+        $this->browse(function (Browser $browser) use ($user, $advertisement) {
+            $browser->loginAs($user)
+                ->visit(route('advertisements.show', $advertisement))
+                ->clickLink('Edit Advertisement')
+                ->assertPathIs("/advertisements/{$advertisement->id}/edit")
+                ->type('title', 'Updated Title')
+                ->type('description', 'Updated Description')
+                ->type('price', '200')
+                ->press('UPDATE LISTING')
+                ->assertPathIs("/advertisements/{$advertisement->id}")
+                ->assertSee('Updated Title')
+                ->assertSee('Updated Description')
+                ->assertSee('€200');
+        });
+    }
+
+    #[Test]
+    public function user_can_delete_their_advertisement()
+    {
+        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
+        $advertisement = Advertisement::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'To Be Deleted',
+            'type' => 'listing',
+            'is_active' => true
+        ]);
+
+        $this->browse(function (Browser $browser) use ($user, $advertisement) {
+            $browser->loginAs($user)
+                ->visit(route('advertisements.show', $advertisement))
+                ->press('Delete Advertisement')
+                ->acceptDialog()
+                ->assertPathIs('/advertisements')
+                ->assertDontSee('To Be Deleted');
+        });
+
+        $this->assertDatabaseMissing('advertisements', [
+            'id' => $advertisement->id
+        ]);
+    }
 
     #[Test]
     public function user_can_view_advertisement_details()
     {
         $user = User::factory()->create();
-
         $advertisement = Advertisement::factory()->create([
-            'user_id' => $user->id,
             'title' => 'Detailed Ad',
             'description' => 'This is a detailed description',
             'price' => 150,
             'type' => 'listing',
-            'is_active' => true,
+            'is_active' => true
         ]);
 
         $this->browse(function (Browser $browser) use ($user, $advertisement) {
             $browser->loginAs($user)
                 ->visit(route('advertisements.index'))
-                ->pause(300)
-                // 👇 Use href selector to click the whole advertisement card
-                ->click('@advertisements-show')
-                ->assertSee('Reviews')
-                ->screenshot('clicked-advertisement-detail');
+                ->clickLink('Detailed Ad')
+                ->assertPathIs("/advertisements/{$advertisement->id}")
+                ->assertSee('Detailed Ad')
+                ->assertSee('This is a detailed description')
+                ->assertSee('€150')
+                ->assertSee('Listing');
         });
     }
 
+    #[Test]
+    public function user_can_toggle_advertisement_status()
+    {
+        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
+        $advertisement = Advertisement::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'Toggle Status Ad',
+            'type' => 'listing',
+            'is_active' => true
+        ]);
 
+        $this->browse(function (Browser $browser) use ($user, $advertisement) {
+            $browser->loginAs($user)
+                ->visit(route('advertisements.show', $advertisement))
+                ->clickLink('Deactivate Advertisement')
+                ->assertPathIs("/advertisements/{$advertisement->id}")
+                ->assertSee('Advertisement is now inactive')
+                ->clickLink('Activate Advertisement')
+                ->assertPathIs("/advertisements/{$advertisement->id}")
+                ->assertSee('Advertisement is now active');
+        });
+    }
 
     #[Test]
     public function price_validation_works_correctly()
     {
-        $user = $this->createRandomUser();
+        $user = $this->loginAndReturnSeededUser('seller@debazaar.nl');
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs($user)
@@ -203,24 +276,14 @@ class AdvertisementsTest extends DuskTestCase
                 ->type('description', 'Testing price validation')
                 ->type('price', '-100')
                 ->press('CREATE LISTING')
-                ->pause(300)
-                ->assertSee('The price field must be at least 0.')
-                ->pause(300)
-                ->type('price', '100')
-                ->type('title', 'Invalid Price Ad')
+                ->assertSee('The price must be greater than 0')
+                ->type('price', '0')
                 ->press('CREATE LISTING')
-                ->assertSee('Invalid Price Ad')
-                ->screenshot('HALLO DOOR');
+                ->assertSee('The price must be greater than 0')
+                ->type('price', '100')
+                ->press('CREATE LISTING')
+                ->assertPathIs('/advertisements')
+                ->assertSee('Invalid Price Ad');
         });
-    }
-
-
-    private function createRandomUser(): User
-    {
-        return User::factory()->create([
-            'email' => 'user_' . uniqid() . '@example.com',
-            'password' => bcrypt('Jagoed123!'), // Als je ooit via formulier inlogt
-            'role' => 'seller', // Voeg dit toe als je met rollen werkt
-        ]);
     }
 }
