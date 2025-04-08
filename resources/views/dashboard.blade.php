@@ -164,20 +164,20 @@
                                 @endif
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div class="bg-white p-4 rounded-lg border">
-                                    <div class="text-sm font-medium text-gray-500">{{ __('Total Revenue') }}</div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+                                    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('Total Revenue') }}</div>
                                     <div class="mt-1 text-2xl font-semibold">€0.00</div>
                                 </div>
-                                <div class="bg-white p-4 rounded-lg border">
-                                    <div class="text-sm font-medium text-gray-500">{{ __('Active Contracts') }}</div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+                                    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('Active Contracts') }}</div>
                                     <div class="mt-1 text-2xl font-semibold">0</div>
                                 </div>
-                                <div class="bg-white p-4 rounded-lg border">
-                                    <div class="text-sm font-medium text-gray-500">{{ __('Total Orders') }}</div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+                                    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('Total Orders') }}</div>
                                     <div class="mt-1 text-2xl font-semibold">0</div>
                                 </div>
-                                <div class="bg-white p-4 rounded-lg border">
-                                    <div class="text-sm font-medium text-gray-500">{{ __('Customer Rating') }}</div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+                                    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('Customer Rating') }}</div>
                                     <div class="mt-1 text-2xl font-semibold">-</div>
                                 </div>
                             </div>
