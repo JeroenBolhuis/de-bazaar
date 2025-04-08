@@ -110,4 +110,23 @@ Route::match(['get', 'post'], '/setLocale', function (Request $request) {
     return back();
 })->name('setLocale');
 
+// Business routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/business/settings', [BusinessController::class, 'settings'])->name('business.settings');
+    Route::put('/business/settings', [BusinessController::class, 'updateSettings'])->name('business.settings.update');
+    Route::put('/business/theme', [BusinessController::class, 'updateTheme'])->name('business.theme.update');
+    Route::put('/business/domain', [BusinessController::class, 'updateDomain'])->name('business.domain.update');
+    
+    // Component management routes
+    Route::get('/business/edit', [BusinessController::class, 'editComponents'])->name('business.components.edit');
+    Route::post('/business/components/add', [BusinessController::class, 'addComponent'])->name('business.components.add');
+    Route::post('/business/components/reorder', [BusinessController::class, 'reorderComponents'])->name('business.components.reorder');
+    Route::delete('/business/components/{pivotId}', [BusinessController::class, 'deleteComponent'])->name('business.components.delete');
+    Route::put('/business/components/{pivotId}', [BusinessController::class, 'updateComponent'])->name('business.components.update');
+});
+
+// Public business landing page routes
+Route::get('/business/{customUrl}', [BusinessController::class, 'showByCustomUrl'])->name('business.show');
+Route::post('/business/{customUrl}/contact', [BusinessController::class, 'contact'])->name('business.contact');
+
 require __DIR__ . '/auth.php';
