@@ -23,9 +23,14 @@
                         <h2 class="text-2xl font-semibold">Contracts</h2>
                         @auth
                             @if(auth()->user()->isAdmin())
-                                <a href="{{ route('contracts.create') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                                    Create New Contract
-                                </a>
+                                <div class="flex space-x-4">
+                                    <a href="{{ route('contracts.create') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                        Create New Contract
+                                    </a>
+                                    <a href="{{ route('contracts.export-pdf') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                        Export Overview PDF
+                                    </a>
+                                </div>
                             @endif
                         @endauth
                     </div>

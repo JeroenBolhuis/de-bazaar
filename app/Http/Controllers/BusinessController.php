@@ -69,11 +69,7 @@ class BusinessController extends Controller
     {
         $business = Business::where('custom_url', $customUrl)
             ->with(['components' => function($query) {
-                $query->withPivot(['id', 'title', 'content', 'order'])
-                    ->orderBy('business_components.order');
-            }, 'users', 'advertisements' => function($query) {
-                $query->orderBy('created_at', 'desc')
-                    ->take(3);
+                $query->orderBy('order');
             }])
             ->firstOrFail();
 
@@ -87,13 +83,13 @@ class BusinessController extends Controller
     {
         $business = auth()->user()->business;
         $components = $business->components()
-            ->withPivot(['id', 'title', 'content', 'order'])
-            ->orderBy('business_components.order')
+            ->orderBy('order')
             ->get();
             
-        $availableTypes = Component::pluck('label', 'type')->toArray();
+        $availableTypes = Component::TYPE_OPTIONS;
+        $typeLabels = Component::TYPE_OPTIONS;
 
-        return view('business.edit', compact('components', 'availableTypes'));
+        return view('business.edit', compact('components', 'availableTypes', 'typeLabels'));
     }
 
     /**
@@ -102,24 +98,21 @@ class BusinessController extends Controller
     public function addComponent(Request $request): RedirectResponse
     {
         $request->validate([
-            'type' => 'required|string|max:255',
+            'type' => [
+                'required',
+                'string',
+                'in:' . implode(',', Component::TYPE_OPTIONS)
+            ],
         ]);
 
         $business = auth()->user()->business;
-        $maxOrder = $business->components()->max('business_components.order') ?? 0;
+        $maxOrder = $business->components()->max('order') ?? 0;
 
-        // Find the component type
-        $component = Component::where('type', $request->type)->firstOrFail();
-
-        // Create the business component
-        $business->components()->attach($component->id, [
+        // Create the component
+        $business->components()->create([
+            'type' => $request->type,
             'order' => $maxOrder + 1,
-            'title' => $component->label, // Use the component's label as default title
-            'content' => ''
         ]);
-
-        // Refresh the business to get the latest components
-        $business->refresh();
 
         return redirect()->route('business.components.edit')
             ->with('success', __('Component added successfully.'));
@@ -135,46 +128,38 @@ class BusinessController extends Controller
         if ($request->has('move_up')) {
             $componentId = $request->move_up;
             $component = $business->components()
-                ->wherePivot('id', $componentId)
+                ->where('id', $componentId)
                 ->firstOrFail();
             
-            $currentOrder = $component->pivot->order;
+            $currentOrder = $component->order;
             
             // Find the component above
             $componentAbove = $business->components()
-                ->wherePivot('order', $currentOrder - 1)
+                ->where('order', $currentOrder - 1)
                 ->first();
             
             if ($componentAbove) {
                 // Swap orders
-                $business->components()->updateExistingPivot($component->id, [
-                    'order' => $currentOrder - 1
-                ]);
-                $business->components()->updateExistingPivot($componentAbove->id, [
-                    'order' => $currentOrder
-                ]);
+                $component->update(['order' => $currentOrder - 1]);
+                $componentAbove->update(['order' => $currentOrder]);
             }
         } elseif ($request->has('move_down')) {
             $componentId = $request->move_down;
             $component = $business->components()
-                ->wherePivot('id', $componentId)
+                ->where('id', $componentId)
                 ->firstOrFail();
             
-            $currentOrder = $component->pivot->order;
+            $currentOrder = $component->order;
             
             // Find the component below
             $componentBelow = $business->components()
-                ->wherePivot('order', $currentOrder + 1)
+                ->where('order', $currentOrder + 1)
                 ->first();
             
             if ($componentBelow) {
                 // Swap orders
-                $business->components()->updateExistingPivot($component->id, [
-                    'order' => $currentOrder + 1
-                ]);
-                $business->components()->updateExistingPivot($componentBelow->id, [
-                    'order' => $currentOrder
-                ]);
+                $component->update(['order' => $currentOrder + 1]);
+                $componentBelow->update(['order' => $currentOrder]);
             }
         }
 
@@ -189,58 +174,23 @@ class BusinessController extends Controller
     {
         $business = auth()->user()->business;
         
-        // Find the business component by its pivot ID
-        $businessComponent = $business->components()
-            ->wherePivot('id', $componentId)
+        // Find and delete the component
+        $component = $business->components()
+            ->where('id', $componentId)
             ->firstOrFail();
-
-        // Delete the specific pivot record
-        $business->components()
-            ->wherePivot('id', $componentId)
-            ->detach($businessComponent->id);
+        
+        $component->delete();
 
         // Reorder remaining components
         $remainingComponents = $business->components()
-            ->orderBy('business_components.order')
+            ->orderBy('order')
             ->get();
             
         foreach ($remainingComponents as $index => $component) {
-            $business->components()->updateExistingPivot($component->id, [
-                'order' => $index + 1
-            ]);
+            $component->update(['order' => $index + 1]);
         }
 
         return redirect()->route('business.components.edit')
             ->with('success', __('Component deleted successfully.'));
-    }
-
-    /**
-     * Update a component's content.
-     */
-    public function updateComponent(Request $request, int $pivotId): RedirectResponse
-    {
-        $request->validate([
-            'title' => 'nullable|string|max:255',
-            'content' => 'nullable|string',
-        ]);
-
-        \Log::info('Updating component', [
-            'pivot_id' => $pivotId,
-            'title' => $request->title,
-            'content' => $request->content,
-        ]);
-
-        // Update the business component directly using the pivot ID
-        $updated = DB::table('business_components')
-            ->where('id', $pivotId)
-            ->update([
-                'title' => $request->title,
-                'content' => $request->content,
-            ]);
-
-        \Log::info('Update result', ['updated' => $updated]);
-
-        return redirect()->route('business.components.edit')
-            ->with('success', __('Component updated successfully.'));
     }
 }
