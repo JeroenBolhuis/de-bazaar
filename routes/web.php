@@ -74,6 +74,8 @@ Route::middleware(['auth', 'contracts.accepted'])->group(function () {
 
     // Advertisements management
     Route::middleware(['can:sell-advertisements'])->group(function () {
+        Route::get('/advertisements/import', [AdvertisementController::class, 'import'])->name('advertisements.import');
+        Route::post('/advertisements/import', [AdvertisementController::class, 'processImport'])->name('advertisements.import.process');
         Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('advertisements.create');
         Route::post('/advertisements', [AdvertisementController::class, 'store'])->name('advertisements.store');
     });
@@ -100,6 +102,7 @@ Route::middleware(['auth', 'contracts.accepted'])->group(function () {
     Route::get('/sales/calendar', [SalesAndPurchaseController::class, 'salesCalendar'])->name('sales.calendar');
 });
 
+// General advertisement routes (should be last)
 Route::get('/advertisements', [AdvertisementController::class, 'index'])->name('advertisements.index');
 Route::get('/advertisements/{advertisement}', [AdvertisementController::class, 'show'])->name('advertisements.show');
 

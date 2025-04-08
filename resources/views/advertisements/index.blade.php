@@ -8,7 +8,10 @@
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Browse all available items, including listings, rentals, and auctions') }}</p>
                 </div>
                 @if(auth()->user()?->canSell)
-                    <div>
+                    <div class="flex space-x-4">
+                        <a href="{{ route('advertisements.import') }}" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                            {{ __('Import CSV') }}
+                        </a>
                         <a href="{{ route('advertisements.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             {{ __('Create Advertisement') }}
                         </a>
