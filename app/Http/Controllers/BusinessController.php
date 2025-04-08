@@ -61,82 +61,6 @@ class BusinessController extends Controller
             ->with('success', __('Business domain updated successfully.'));
     }
 
-    /**
-     * Display the landing page builder.
-     */
-    public function landingPage(): View
-    {
-        $business = auth()->user()->business;
-        $business->load(['components', 'users']);
-        return view('business.landing-page', compact('business'));
-    }
-
-    /**
-     * Update landing page content.
-     */
-    public function updateLandingPage(Request $request): RedirectResponse
-    {
-        // TODO: Implement landing page update
-        return redirect()->route('business.landing-page')
-            ->with('success', __('Landing page updated successfully.'));
-    }
-
-    /**
-     * Display API settings.
-     */
-    public function apiSettings(): View
-    {
-        // TODO: Implement API settings view
-        return view('business.api-settings');
-    }
-
-    /**
-     * Generate new API key.
-     */
-    public function generateApiKey(Request $request): RedirectResponse
-    {
-        // TODO: Implement API key generation
-        return redirect()->route('business.api-settings')
-            ->with('success', __('New API key generated successfully.'));
-    }
-
-    /**
-     * Upload and process CSV file for bulk listings.
-     */
-    public function uploadCsv(Request $request): RedirectResponse
-    {
-        // TODO: Implement CSV upload and processing
-        return redirect()->route('business.settings')
-            ->with('success', __('CSV file processed successfully.'));
-    }
-
-    /**
-     * Display contract management.
-     */
-    public function contracts(): View
-    {
-        // TODO: Implement contracts view
-        return view('business.contracts');
-    }
-
-    /**
-     * Upload signed contract.
-     */
-    public function uploadContract(Request $request): RedirectResponse
-    {
-        // TODO: Implement contract upload
-        return redirect()->route('business.contracts')
-            ->with('success', __('Contract uploaded successfully.'));
-    }
-
-    /**
-     * Generate PDF contract.
-     */
-    public function generateContract(string $id)
-    {
-        // TODO: Implement PDF contract generation
-        // Return PDF response
-    }
 
     /**
      * Display business landing page by custom URL.
@@ -154,33 +78,6 @@ class BusinessController extends Controller
             ->firstOrFail();
 
         return view('business.landing-page', compact('business'));
-    }
-
-    /**
-     * Handle contact form submission.
-     */
-    public function contact(Request $request, string $customUrl): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'message' => 'required|string',
-        ]);
-
-        $business = Business::where('custom_url', $customUrl)
-            ->with('users')
-            ->firstOrFail();
-
-        // Send email to business owner
-        Mail::to($business->users->first()->email)
-            ->send(new BusinessContactForm(
-                $request->name,
-                $request->email,
-                $request->message
-            ));
-
-        return redirect()->back()
-            ->with('success', __('Your message has been sent successfully.'));
     }
 
     /**

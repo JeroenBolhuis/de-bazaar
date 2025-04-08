@@ -62,20 +62,13 @@
             <!-- Business Components -->
             <div class="space-y-8">
                 @foreach($business->components as $component)
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                        @if($component->pivot->title)
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">{{ $component->pivot->title }}</h3>
-                        @endif
-                        
+                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">                        
                         @php
                             $componentData = [
-                                'title' => $component->pivot->title,
                                 'content' => $component->pivot->content,
-                                'image' => $component->pivot->image,
                                 'advertisements' => $business->advertisements
                             ];
                         @endphp
-
                         @include('business.components.' . $component->type, ['component' => (object)$componentData])
                     </div>
                 @endforeach

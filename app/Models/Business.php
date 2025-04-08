@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Business extends Model
 {
@@ -43,10 +44,10 @@ class Business extends Model
     }
 
     /**
-     * Get the advertisements associated with the business.
+     * Get all the advertisements from all users associated with the business.
      */
-    public function advertisements(): HasMany
+    public function advertisements(): HasManyThrough
     {
-        return $this->hasMany(Advertisement::class);
+        return $this->hasManyThrough(Advertisement::class, User::class);
     }
 } 
