@@ -49,6 +49,8 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->string('return_image')->nullable();
+            $table->decimal('discount_percentage', 5, 2)->default(0);
+            $table->decimal('original_price', 10, 2);
             $table->timestamps();
         });
 
@@ -57,6 +59,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('advertisement_id')->constrained()->onDelete('cascade');
             $table->timestamp('purchase_date')->nullable();
+            $table->decimal('discount_percentage', 5, 2)->default(0);
+            $table->decimal('original_price', 10, 2);
             $table->timestamps();
         });
     }

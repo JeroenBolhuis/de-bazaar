@@ -24,17 +24,6 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Listing routes
-Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
-Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
-
-// Rental routes
-Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
-Route::get('/rentals/{rental}', [RentalController::class, 'show'])->name('rentals.show');
-
-
-Route::post('/rentals/{advertisement}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
-
 // Contract routes
 Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
 Route::post('/contracts/accept', [ContractController::class, 'accept'])->name('contracts.accept');
@@ -127,6 +116,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Public business landing page routes
 Route::get('/business/{customUrl}', [BusinessController::class, 'showByCustomUrl'])->name('business.show');
-Route::post('/business/{customUrl}/contact', [BusinessController::class, 'contact'])->name('business.contact');
 
 require __DIR__ . '/auth.php';

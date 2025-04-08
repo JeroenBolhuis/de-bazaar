@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             MinigameSeeder::class,
             ContractSeeder::class,
             ComponentSeeder::class,
-            AdvertisementBusinessSeeder::class,
         ]);
     }
 }
